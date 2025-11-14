@@ -20,7 +20,8 @@ import {
 import {Input} from '@/components/ui/input';
 import {ScrollArea} from '@/components/ui/scroll-area';
 import {Badge} from '@/components/ui/badge';
-import {chat, ChatInput} from '@/ai/flows/chat-flow';
+import {chat} from '@/ai/flows/chat-flow';
+import type {ChatInput} from '@/ai/flows/chat-flow.schema';
 
 type Message = {
   role: 'user' | 'model';
