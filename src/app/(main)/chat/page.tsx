@@ -9,6 +9,7 @@ import {
   FilePenLine,
   Loader,
 } from 'lucide-react';
+import {marked} from 'marked';
 import {Button} from '@/components/ui/button';
 import {
   Card,
@@ -89,6 +90,11 @@ export default function ChatPage() {
       });
     }
   }, [messages]);
+
+  const renderMessageContent = (content: string) => {
+    const html = marked.parse(content);
+    return {__html: html};
+  };
 
   return (
     <div className="grid h-[calc(100vh-6rem)] w-full grid-cols-1 md:grid-cols-[300px_1fr] gap-4">
@@ -174,15 +180,16 @@ export default function ChatPage() {
                       </div>
                     )}
                     <div
-                      className={`max-w-xl rounded-lg p-4 text-sm ${
+                      className={`max-w-xl rounded-lg p-4 text-sm prose dark:prose-invert ${
                         message.role === 'user'
                           ? 'bg-primary text-primary-foreground'
                           : 'bg-muted'
                       }`}
                     >
                       <div
-                        className="prose prose-sm dark:prose-invert"
-                        dangerouslySetInnerHTML={{__html: message.content}}
+                        dangerouslySetInnerHTML={renderMessageContent(
+                          message.content
+                        )}
                       />
                     </div>
                   </div>

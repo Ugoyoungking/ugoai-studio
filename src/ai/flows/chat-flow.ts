@@ -23,6 +23,8 @@ const chatFlow = ai.defineFlow(
     const {history, message} = input;
 
     const result = await ai.generate({
+      system:
+        'You are a helpful AI assistant. Your response should be formatted with Markdown. You can use lists, tables, code blocks, and emojis to make your responses more engaging and clear.',
       history: history,
       prompt: message,
     });
