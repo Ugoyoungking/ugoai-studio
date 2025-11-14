@@ -103,7 +103,7 @@ const CodeBlock = ({
           },
         }}
       >
-        {code}
+        {String(code)}
       </SyntaxHighlighter>
     </div>
   );
@@ -213,10 +213,8 @@ export default function ChatPage() {
 
   const renderMessageContent = (content: string) => {
     const renderer = new marked.Renderer();
-    const originalCode = renderer.code;
     
-    // This is a bit of a hack to render code blocks with react-syntax-highlighter
-    // We replace the code block with a placeholder and store the code block info.
+    // Store code blocks and replace them with placeholders
     const codeBlocks: {placeholder: string; lang?: string; code: string}[] = [];
     renderer.code = (code, lang, escaped) => {
       const placeholder = `{{CODE_BLOCK_${codeBlocks.length}}}`;
@@ -226,18 +224,19 @@ export default function ChatPage() {
   
     const html = marked.parse(content, { renderer });
   
-    // Split the HTML by our placeholders and intersperse the code block components.
+    // Split the HTML by placeholders and intersperse the code block components
     const parts = html.split(/({{CODE_BLOCK_\d+}})/);
     
     return parts.map((part, index) => {
-      if (part.match(/{{CODE_BLOCK_(\d+)}}/)) {
-        const match = part.match(/{{CODE_BLOCK_(\d+)}}/);
-        const codeBlockIndex = parseInt(match![1], 10);
+      const codeBlockMatch = part.match(/{{CODE_BLOCK_(\d+)}}/);
+      if (codeBlockMatch) {
+        const codeBlockIndex = parseInt(codeBlockMatch[1], 10);
         const { lang, code } = codeBlocks[codeBlockIndex];
         return <CodeBlock key={index} lang={lang} code={code} />;
-      } else {
+      } else if (part) {
         return <div key={index} dangerouslySetInnerHTML={{ __html: part }} />;
       }
+      return null;
     });
   };
 
@@ -487,3 +486,5 @@ export default function ChatPage() {
     </div>
   );
 }
+
+    
