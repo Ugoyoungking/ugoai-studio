@@ -212,38 +212,28 @@ export default function ChatPage() {
   }, [messages]);
 
   const renderMessageContent = (content: string) => {
+    const tokens = marked.lexer(content);
     const renderer = new marked.Renderer();
-    const codeBlocks: {placeholder: string; lang?: string; code: string}[] = [];
-  
-    renderer.code = (code, lang) => {
-      const placeholder = `{{CODE_BLOCK_${codeBlocks.length}}}`;
-      codeBlocks.push({placeholder, lang: lang || undefined, code});
-      return placeholder;
-    };
-  
-    const html = marked.parse(content, {renderer});
-  
-    const parts = html.split(/({{CODE_BLOCK_\d+}})/);
-  
-    return parts.map((part, index) => {
-      if (!part) return null;
-  
-      const codeBlockMatch = part.match(/{{CODE_BLOCK_(\d+)}}/);
-      if (codeBlockMatch) {
-        const codeBlockIndex = parseInt(codeBlockMatch[1], 10);
-        const {lang, code} = codeBlocks[codeBlockIndex];
-        return <CodeBlock key={index} lang={lang} code={code} />;
+    
+    return tokens.map((token, index) => {
+      if (token.type === 'code') {
+        return (
+          <CodeBlock
+            key={index}
+            lang={token.lang}
+            code={token.text}
+          />
+        );
       }
-  
-      // This is a workaround for a bug in `marked` that sometimes returns
-      // an object instead of a string for the `part` variable.
-      const sanitizedPart =
-        typeof part === 'string' ? part : (part as any).toString();
-  
+      
+      // For other token types, render them as HTML.
+      // We need to wrap the single token in a `tokens` array with a `links` property.
+      const html = marked.parser([token], { renderer });
+
       return (
         <div
           key={index}
-          dangerouslySetInnerHTML={{__html: sanitizedPart}}
+          dangerouslySetInnerHTML={{ __html: html }}
         />
       );
     });
