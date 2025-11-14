@@ -119,12 +119,24 @@
     @apply rounded-lg border;
   }
   .prose table {
-    @apply w-full border-collapse;
+    @apply w-full my-4 border-collapse;
   }
   .prose th, .prose td {
     @apply border px-4 py-2 text-left;
   }
   .prose th {
-    @apply font-semibold;
+    @apply font-semibold bg-muted;
+  }
+
+  .dark .prose th {
+     @apply bg-background;
+  }
+
+  .prose tr:nth-child(even) {
+    @apply bg-muted/50;
+  }
+
+  .dark .prose tr:nth-child(even) {
+    @apply bg-background/50;
   }
 }
