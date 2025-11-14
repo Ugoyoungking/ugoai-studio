@@ -8,6 +8,10 @@ import {
   Trash,
   FilePenLine,
   Loader,
+  Copy,
+  RefreshCw,
+  ThumbsUp,
+  ThumbsDown,
 } from 'lucide-react';
 import {marked} from 'marked';
 import {Button} from '@/components/ui/button';
@@ -23,6 +27,7 @@ import {ScrollArea} from '@/components/ui/scroll-area';
 import {Badge} from '@/components/ui/badge';
 import {chat} from '@/ai/flows/chat-flow';
 import type {ChatInput} from '@/ai/flows/chat-flow.schema';
+import { useToast } from "@/hooks/use-toast";
 
 type Message = {
   role: 'user' | 'model';
@@ -30,6 +35,7 @@ type Message = {
 };
 
 export default function ChatPage() {
+  const { toast } = useToast();
   const [chats, setChats] = useState([
     {id: 1, title: 'React Server Components', time: '1h ago', active: true},
     {id: 2, title: 'Next.js 15 App Router', time: '5m ago', active: false},
@@ -49,16 +55,22 @@ export default function ChatPage() {
   const [isLoading, setIsLoading] = useState(false);
   const scrollAreaRef = useRef<HTMLDivElement>(null);
 
-  const handleSendMessage = async (e: React.FormEvent) => {
+  const handleSendMessage = async (e: React.FormEvent, messageToSend?: string) => {
     e.preventDefault();
-    if (!input.trim()) return;
+    const currentMessage = messageToSend || input;
+    if (!currentMessage.trim()) return;
 
-    const userMessage: Message = {role: 'user', content: input};
-    setMessages(prev => [...prev, userMessage]);
-    setInput('');
+    if(!messageToSend) {
+        const userMessage: Message = {role: 'user', content: currentMessage};
+        setMessages(prev => [...prev, userMessage]);
+        setInput('');
+    }
+    
     setIsLoading(true);
 
-    const chatHistory: ChatInput['history'] = messages.map(msg => ({
+    const chatHistory: ChatInput['history'] = messages
+        .filter(msg => !(messageToSend && msg.role === 'model' && messages.indexOf(msg) === messages.length - 1))
+        .map(msg => ({
       role: msg.role as 'user' | 'model',
       content: [{text: msg.content}],
     }));
@@ -66,21 +78,44 @@ export default function ChatPage() {
     try {
       const result = await chat({
         history: chatHistory,
-        message: input,
+        message: currentMessage,
       });
       const aiMessage: Message = {role: 'model', content: result.message};
-      setMessages(prev => [...prev, aiMessage]);
+      if (messageToSend) {
+        setMessages(prev => [...prev.slice(0, -1), aiMessage]);
+      } else {
+        setMessages(prev => [...prev, aiMessage]);
+      }
     } catch (error) {
       console.error('Error getting AI response:', error);
       const errorMessage: Message = {
         role: 'model',
         content: 'Sorry, I ran into an error. Please try again.',
       };
-      setMessages(prev => [...prev, errorMessage]);
+       if (messageToSend) {
+        setMessages(prev => [...prev.slice(0, -1), errorMessage]);
+      } else {
+        setMessages(prev => [...prev, errorMessage]);
+      }
     } finally {
       setIsLoading(false);
     }
   };
+
+  const handleRegenerate = (e: React.FormEvent) => {
+    const lastUserMessage = messages.filter(m => m.role === 'user').pop();
+    if(lastUserMessage){
+        handleSendMessage(e, lastUserMessage.content);
+    }
+  }
+
+  const handleCopy = (content: string) => {
+    navigator.clipboard.writeText(content);
+    toast({
+        title: "Copied to clipboard!",
+        description: "The message content has been copied.",
+      });
+  }
 
   useEffect(() => {
     if (scrollAreaRef.current) {
@@ -170,7 +205,7 @@ export default function ChatPage() {
                 {messages.map((message, index) => (
                   <div
                     key={index}
-                    className={`flex items-start gap-4 ${
+                    className={`flex items-start gap-4 group/message ${
                       message.role === 'user' ? 'justify-end' : ''
                     }`}
                   >
@@ -180,7 +215,7 @@ export default function ChatPage() {
                       </div>
                     )}
                     <div
-                      className={`max-w-xl rounded-lg p-4 text-sm prose dark:prose-invert ${
+                      className={`max-w-xl rounded-lg p-4 text-sm prose dark:prose-invert prose-p:my-2 prose-headings:my-3 ${
                         message.role === 'user'
                           ? 'bg-primary text-primary-foreground'
                           : 'bg-muted'
@@ -192,6 +227,22 @@ export default function ChatPage() {
                         )}
                       />
                     </div>
+                     {message.role === 'model' && index === messages.length -1 && !isLoading && (
+                       <div className="opacity-0 group-hover/message:opacity-100 transition-opacity flex flex-col gap-1 self-center">
+                        <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => handleCopy(message.content)}>
+                          <Copy className="h-4 w-4" />
+                        </Button>
+                        <Button variant="ghost" size="icon" className="h-7 w-7" onClick={handleRegenerate}>
+                          <RefreshCw className="h-4 w-4" />
+                        </Button>
+                        <Button variant="ghost" size="icon" className="h-7 w-7">
+                          <ThumbsUp className="h-4 w-4" />
+                        </Button>
+                        <Button variant="ghost" size="icon" className="h-7 w-7">
+                          <ThumbsDown className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    )}
                   </div>
                 ))}
                 {isLoading && (
