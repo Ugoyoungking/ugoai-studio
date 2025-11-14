@@ -10,6 +10,7 @@
 
 import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
+import {PDFDocument, rgb, StandardFonts} from 'pdf-lib';
 
 const GeneratePdfFromTextInputSchema = z.object({
   textPrompt: z.string().describe('The text prompt to use for generating the PDF document.'),
@@ -20,7 +21,7 @@ const GeneratePdfFromTextOutputSchema = z.object({
   pdfDataUri: z
     .string()
     .describe(
-      'The generated PDF document as a data URI that must include a MIME type and use Base64 encoding. Expected format: \'data:<mimetype>;base64,<encoded_data>\'.' // Corrected typo here
+      "The generated PDF document as a data URI that must include a MIME type and use Base64 encoding. Expected format: 'data:<mimetype>;base64,<encoded_data>'"
     ),
 });
 export type GeneratePdfFromTextOutput = z.infer<typeof GeneratePdfFromTextOutputSchema>;
@@ -29,13 +30,18 @@ export async function generatePdfFromText(input: GeneratePdfFromTextInput): Prom
   return generatePdfFromTextFlow(input);
 }
 
-const prompt = ai.definePrompt({
-  name: 'generatePdfFromTextPrompt',
-  input: {schema: GeneratePdfFromTextInputSchema},
-  output: {schema: GeneratePdfFromTextOutputSchema},
-  prompt: `You are an AI that generates PDF documents from text prompts. The PDF document must be returned as a base64 encoded data URI.
-
-  Generate a PDF document from the following text prompt: {{{textPrompt}}}`,
+const pdfGenerationPrompt = ai.definePrompt({
+  name: 'pdfGenerationPrompt',
+  input: {schema: z.object({prompt: z.string()})},
+  output: {
+    schema: z.object({
+      title: z.string(),
+      content: z.string(),
+    }),
+  },
+  prompt: `You are an AI that generates content for a PDF document based on a text prompt.
+  Generate a title and content for a PDF based on the following prompt:
+  {{{prompt}}}`,
 });
 
 const generatePdfFromTextFlow = ai.defineFlow(
@@ -45,16 +51,53 @@ const generatePdfFromTextFlow = ai.defineFlow(
     outputSchema: GeneratePdfFromTextOutputSchema,
   },
   async input => {
-    // TODO: Implement the logic to convert the text prompt to a PDF document.
-    // This will likely involve using a library like pdfmake or jsPDF.
-    // For now, we'll just return a placeholder data URI.
+    const {output} = await pdfGenerationPrompt({prompt: input.textPrompt});
 
-    // const pdfData = await generatePdf(input.textPrompt);
-    // return {pdfDataUri: pdfData};
-    // Generating a dummy pdf, so that the app does not fail, this needs to be implemented.
-    const dummyPdfDataUri = 'data:application/pdf;base64,JVBERi0xLg==';
-    const {output} = await prompt(input);
+    if (!output) {
+      throw new Error('Failed to generate PDF content.');
+    }
 
-    return {pdfDataUri: dummyPdfDataUri};
+    const {title, content} = output;
+
+    const pdfDoc = await PDFDocument.create();
+    const page = pdfDoc.addPage();
+    const {width, height} = page.getSize();
+    const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
+    const titleFont = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
+
+    const fontSize = 12;
+    const titleFontSize = 24;
+    const margin = 50;
+
+    page.drawText(title, {
+      x: margin,
+      y: height - margin - titleFontSize,
+      font: titleFont,
+      size: titleFontSize,
+      color: rgb(0, 0, 0),
+    });
+
+    const lines = content.split('\n');
+    let y = height - margin - titleFontSize - 30;
+
+    for (const line of lines) {
+      if (y < margin) {
+        const newPage = pdfDoc.addPage();
+        y = newPage.getSize().height - margin;
+      }
+      page.drawText(line, {
+        x: margin,
+        y,
+        font,
+        size: fontSize,
+        color: rgb(0, 0, 0),
+      });
+      y -= fontSize + 5;
+    }
+
+    const pdfBytes = await pdfDoc.save();
+    const pdfDataUri = `data:application/pdf;base64,${Buffer.from(pdfBytes).toString('base64')}`;
+
+    return {pdfDataUri};
   }
 );

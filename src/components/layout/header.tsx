@@ -52,7 +52,6 @@ const pathToTitleMap: { [key: string]: string } = {
 export function Header() {
   const pathname = usePathname()
 
-  const title = pathToTitleMap[pathname] || "Dashboard"
   const pathSegments = pathname.split("/").filter(Boolean)
 
   return (
@@ -82,7 +81,7 @@ export function Header() {
             <React.Fragment key={segment}>
               <BreadcrumbItem>
                 <BreadcrumbPage className="capitalize">
-                  {pathToTitleMap[`/${segment}`] || segment}
+                  {pathToTitleMap[`/${segment}`] || segment.replace(/-/g, " ")}
                 </BreadcrumbPage>
               </BreadcrumbItem>
               {index < pathSegments.length - 1 && <BreadcrumbSeparator />}
