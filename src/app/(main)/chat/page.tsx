@@ -363,7 +363,7 @@ export default function ChatPage() {
               className="h-[calc(100vh-18rem)]"
               ref={scrollAreaRef as any}
             >
-              <div className="p-6 space-y-8">
+              <div className="p-6 space-y-12">
                 {messages.map((message, index) => (
                   <div
                     key={index}
