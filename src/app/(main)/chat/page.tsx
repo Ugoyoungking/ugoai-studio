@@ -213,30 +213,39 @@ export default function ChatPage() {
 
   const renderMessageContent = (content: string) => {
     const renderer = new marked.Renderer();
-    
-    // Store code blocks and replace them with placeholders
     const codeBlocks: {placeholder: string; lang?: string; code: string}[] = [];
-    renderer.code = (code, lang, escaped) => {
+  
+    renderer.code = (code, lang) => {
       const placeholder = `{{CODE_BLOCK_${codeBlocks.length}}}`;
-      codeBlocks.push({placeholder, lang, code});
+      codeBlocks.push({placeholder, lang: lang || undefined, code});
       return placeholder;
     };
   
-    const html = marked.parse(content, { renderer });
+    const html = marked.parse(content, {renderer});
   
-    // Split the HTML by placeholders and intersperse the code block components
     const parts = html.split(/({{CODE_BLOCK_\d+}})/);
-    
+  
     return parts.map((part, index) => {
+      if (!part) return null;
+  
       const codeBlockMatch = part.match(/{{CODE_BLOCK_(\d+)}}/);
       if (codeBlockMatch) {
         const codeBlockIndex = parseInt(codeBlockMatch[1], 10);
-        const { lang, code } = codeBlocks[codeBlockIndex];
+        const {lang, code} = codeBlocks[codeBlockIndex];
         return <CodeBlock key={index} lang={lang} code={code} />;
-      } else if (part) {
-        return <div key={index} dangerouslySetInnerHTML={{ __html: part }} />;
       }
-      return null;
+  
+      // This is a workaround for a bug in `marked` that sometimes returns
+      // an object instead of a string for the `part` variable.
+      const sanitizedPart =
+        typeof part === 'string' ? part : (part as any).toString();
+  
+      return (
+        <div
+          key={index}
+          dangerouslySetInnerHTML={{__html: sanitizedPart}}
+        />
+      );
     });
   };
 
@@ -486,5 +495,3 @@ export default function ChatPage() {
     </div>
   );
 }
-
-    
