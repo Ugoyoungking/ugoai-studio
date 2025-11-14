@@ -12,8 +12,11 @@ import {
   RefreshCw,
   ThumbsUp,
   ThumbsDown,
+  Check,
 } from 'lucide-react';
 import {marked} from 'marked';
+import {Prism as SyntaxHighlighter} from 'react-syntax-highlighter';
+import {vscDarkPlus} from 'react-syntax-highlighter/dist/esm/styles/prism';
 import {Button} from '@/components/ui/button';
 import {
   Card,
@@ -27,15 +30,87 @@ import {ScrollArea} from '@/components/ui/scroll-area';
 import {Badge} from '@/components/ui/badge';
 import {chat} from '@/ai/flows/chat-flow';
 import type {ChatInput} from '@/ai/flows/chat-flow.schema';
-import { useToast } from "@/hooks/use-toast";
+import {useToast} from '@/hooks/use-toast';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
 
 type Message = {
   role: 'user' | 'model';
   content: string;
 };
 
+const CodeBlock = ({
+  lang,
+  code,
+}: {
+  lang: string | undefined;
+  code: string;
+}) => {
+  const {toast} = useToast();
+  const [isCopied, setIsCopied] = useState(false);
+
+  const handleCopy = () => {
+    navigator.clipboard.writeText(code);
+    setIsCopied(true);
+    toast({
+      title: 'Code copied!',
+      description: 'The code block has been copied to your clipboard.',
+    });
+    setTimeout(() => setIsCopied(false), 2000);
+  };
+
+  return (
+    <div className="relative my-4 rounded-lg bg-[#2d2d2d] text-sm">
+      <div className="flex items-center justify-between px-4 py-1.5 border-b border-zinc-700">
+        <span className="text-xs text-zinc-400">{lang || 'code'}</span>
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-7 w-7 text-zinc-400 hover:bg-zinc-700 hover:text-white"
+                onClick={handleCopy}
+              >
+                {isCopied ? (
+                  <Check className="h-4 w-4 text-green-400" />
+                ) : (
+                  <Copy className="h-4 w-4" />
+                )}
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>Copy code</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+      </div>
+      <SyntaxHighlighter
+        language={lang}
+        style={vscDarkPlus}
+        customStyle={{
+          margin: 0,
+          padding: '1rem',
+          backgroundColor: 'transparent',
+        }}
+        codeTagProps={{
+          style: {
+            fontFamily: 'var(--font-code)',
+          },
+        }}
+      >
+        {code}
+      </SyntaxHighlighter>
+    </div>
+  );
+};
+
 export default function ChatPage() {
-  const { toast } = useToast();
+  const {toast} = useToast();
   const [chats, setChats] = useState([
     {id: 1, title: 'React Server Components', time: '1h ago', active: true},
     {id: 2, title: 'Next.js 15 App Router', time: '5m ago', active: false},
@@ -55,25 +130,35 @@ export default function ChatPage() {
   const [isLoading, setIsLoading] = useState(false);
   const scrollAreaRef = useRef<HTMLDivElement>(null);
 
-  const handleSendMessage = async (e: React.FormEvent, messageToSend?: string) => {
+  const handleSendMessage = async (
+    e: React.FormEvent,
+    messageToSend?: string
+  ) => {
     e.preventDefault();
     const currentMessage = messageToSend || input;
     if (!currentMessage.trim()) return;
 
-    if(!messageToSend) {
-        const userMessage: Message = {role: 'user', content: currentMessage};
-        setMessages(prev => [...prev, userMessage]);
-        setInput('');
+    if (!messageToSend) {
+      const userMessage: Message = {role: 'user', content: currentMessage};
+      setMessages(prev => [...prev, userMessage]);
+      setInput('');
     }
-    
+
     setIsLoading(true);
 
     const chatHistory: ChatInput['history'] = messages
-        .filter(msg => !(messageToSend && msg.role === 'model' && messages.indexOf(msg) === messages.length - 1))
-        .map(msg => ({
-      role: msg.role as 'user' | 'model',
-      content: [{text: msg.content}],
-    }));
+      .filter(
+        msg =>
+          !(
+            messageToSend &&
+            msg.role === 'model' &&
+            messages.indexOf(msg) === messages.length - 1
+          )
+      )
+      .map(msg => ({
+        role: msg.role as 'user' | 'model',
+        content: [{text: msg.content}],
+      }));
 
     try {
       const result = await chat({
@@ -92,7 +177,7 @@ export default function ChatPage() {
         role: 'model',
         content: 'Sorry, I ran into an error. Please try again.',
       };
-       if (messageToSend) {
+      if (messageToSend) {
         setMessages(prev => [...prev.slice(0, -1), errorMessage]);
       } else {
         setMessages(prev => [...prev, errorMessage]);
@@ -104,18 +189,18 @@ export default function ChatPage() {
 
   const handleRegenerate = (e: React.FormEvent) => {
     const lastUserMessage = messages.filter(m => m.role === 'user').pop();
-    if(lastUserMessage){
-        handleSendMessage(e, lastUserMessage.content);
+    if (lastUserMessage) {
+      handleSendMessage(e, lastUserMessage.content);
     }
-  }
+  };
 
   const handleCopy = (content: string) => {
     navigator.clipboard.writeText(content);
     toast({
-        title: "Copied to clipboard!",
-        description: "The message content has been copied.",
-      });
-  }
+      title: 'Copied to clipboard!',
+      description: 'The message content has been copied.',
+    });
+  };
 
   useEffect(() => {
     if (scrollAreaRef.current) {
@@ -127,8 +212,33 @@ export default function ChatPage() {
   }, [messages]);
 
   const renderMessageContent = (content: string) => {
-    const html = marked.parse(content);
-    return {__html: html};
+    const renderer = new marked.Renderer();
+    const originalCode = renderer.code;
+    
+    // This is a bit of a hack to render code blocks with react-syntax-highlighter
+    // We replace the code block with a placeholder and store the code block info.
+    const codeBlocks: {placeholder: string; lang?: string; code: string}[] = [];
+    renderer.code = (code, lang, escaped) => {
+      const placeholder = `{{CODE_BLOCK_${codeBlocks.length}}}`;
+      codeBlocks.push({placeholder, lang, code});
+      return placeholder;
+    };
+  
+    const html = marked.parse(content, { renderer });
+  
+    // Split the HTML by our placeholders and intersperse the code block components.
+    const parts = html.split(/({{CODE_BLOCK_\d+}})/);
+    
+    return parts.map((part, index) => {
+      if (part.match(/{{CODE_BLOCK_(\d+)}}/)) {
+        const match = part.match(/{{CODE_BLOCK_(\d+)}}/);
+        const codeBlockIndex = parseInt(match![1], 10);
+        const { lang, code } = codeBlocks[codeBlockIndex];
+        return <CodeBlock key={index} lang={lang} code={code} />;
+      } else {
+        return <div key={index} dangerouslySetInnerHTML={{ __html: part }} />;
+      }
+    });
   };
 
   return (
@@ -136,9 +246,18 @@ export default function ChatPage() {
       <Card className="hidden md:flex flex-col">
         <CardHeader className="flex flex-row items-center justify-between p-4 border-b">
           <CardTitle className="text-lg">Chats</CardTitle>
-          <Button size="icon" variant="ghost">
-            <PlusCircle className="h-5 w-5" />
-          </Button>
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button size="icon" variant="ghost">
+                  <PlusCircle className="h-5 w-5" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>New Chat</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
         </CardHeader>
         <CardContent className="p-0 flex-1">
           <ScrollArea className="h-full">
@@ -167,12 +286,36 @@ export default function ChatPage() {
                     </span>
                   </div>
                   <div className="opacity-0 group-hover:opacity-100 transition-opacity flex gap-1">
-                    <Button size="icon" variant="ghost" className="h-7 w-7">
-                      <FilePenLine className="h-4 w-4" />
-                    </Button>
-                    <Button size="icon" variant="ghost" className="h-7 w-7">
-                      <Trash className="h-4 w-4" />
-                    </Button>
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Button
+                            size="icon"
+                            variant="ghost"
+                            className="h-7 w-7"
+                          >
+                            <FilePenLine className="h-4 w-4" />
+                          </Button>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p>Rename</p>
+                        </TooltipContent>
+                      </Tooltip>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Button
+                            size="icon"
+                            variant="ghost"
+                            className="h-7 w-7"
+                          >
+                            <Trash className="h-4 w-4" />
+                          </Button>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p>Delete</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
                   </div>
                 </div>
               ))}
@@ -192,57 +335,118 @@ export default function ChatPage() {
                 </div>
               </div>
             </div>
-            <Button size="icon" variant="ghost">
-              <MoreHorizontal className="h-5 w-5" />
-            </Button>
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button size="icon" variant="ghost">
+                    <MoreHorizontal className="h-5 w-5" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>More Options</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
           </CardHeader>
           <CardContent className="p-0 flex-1">
             <ScrollArea
               className="h-[calc(100vh-18rem)]"
               ref={scrollAreaRef as any}
             >
-              <div className="p-6 space-y-6">
+              <div className="p-6 space-y-4">
                 {messages.map((message, index) => (
                   <div
                     key={index}
-                    className={`flex items-start gap-4 group/message ${
-                      message.role === 'user' ? 'justify-end' : ''
+                    className={`flex flex-col items-start gap-2 group/message ${
+                      message.role === 'user' ? 'items-end' : ''
                     }`}
                   >
-                    {message.role === 'model' && (
-                      <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
-                        <Bot className="h-5 w-5" />
-                      </div>
-                    )}
                     <div
-                      className={`max-w-xl rounded-lg p-4 text-sm prose dark:prose-invert prose-p:my-2 prose-headings:my-3 ${
-                        message.role === 'user'
-                          ? 'bg-primary text-primary-foreground'
-                          : 'bg-muted'
+                      className={`flex items-start gap-4 ${
+                        message.role === 'user' ? 'flex-row-reverse' : ''
                       }`}
                     >
+                      {message.role === 'model' && (
+                        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
+                          <Bot className="h-5 w-5" />
+                        </div>
+                      )}
                       <div
-                        dangerouslySetInnerHTML={renderMessageContent(
-                          message.content
-                        )}
-                      />
-                    </div>
-                     {message.role === 'model' && index === messages.length -1 && !isLoading && (
-                       <div className="opacity-0 group-hover/message:opacity-100 transition-opacity flex flex-col gap-1 self-center">
-                        <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => handleCopy(message.content)}>
-                          <Copy className="h-4 w-4" />
-                        </Button>
-                        <Button variant="ghost" size="icon" className="h-7 w-7" onClick={handleRegenerate}>
-                          <RefreshCw className="h-4 w-4" />
-                        </Button>
-                        <Button variant="ghost" size="icon" className="h-7 w-7">
-                          <ThumbsUp className="h-4 w-4" />
-                        </Button>
-                        <Button variant="ghost" size="icon" className="h-7 w-7">
-                          <ThumbsDown className="h-4 w-4" />
-                        </Button>
+                        className={`max-w-2xl rounded-lg px-4 py-3 text-sm prose dark:prose-invert prose-p:my-2 prose-headings:my-3 prose-pre:p-0 prose-pre:bg-transparent prose-pre:border-0 ${
+                          message.role === 'user'
+                            ? 'bg-primary text-primary-foreground'
+                            : 'bg-muted'
+                        }`}
+                      >
+                         <div>{renderMessageContent(message.content)}</div>
                       </div>
-                    )}
+                    </div>
+                    {message.role === 'model' &&
+                      index === messages.length - 1 &&
+                      !isLoading && (
+                        <div className="flex gap-1 self-start ml-12 -mt-1">
+                          <TooltipProvider>
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <Button
+                                  variant="ghost"
+                                  size="icon"
+                                  className="h-7 w-7"
+                                  onClick={() => handleCopy(message.content)}
+                                >
+                                  <Copy className="h-4 w-4" />
+                                </Button>
+                              </TooltipTrigger>
+                              <TooltipContent>
+                                <p>Copy</p>
+                              </TooltipContent>
+                            </Tooltip>
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <Button
+                                  variant="ghost"
+                                  size="icon"
+                                  className="h-7 w-7"
+                                  onClick={handleRegenerate}
+                                >
+                                  <RefreshCw className="h-4 w-4" />
+                                </Button>
+                              </TooltipTrigger>
+                              <TooltipContent>
+                                <p>Regenerate</p>
+                              </TooltipContent>
+                            </Tooltip>
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <Button
+                                  variant="ghost"
+                                  size="icon"
+                                  className="h-7 w-7"
+                                >
+                                  <ThumbsUp className="h-4 w-4" />
+                                </Button>
+                              </TooltipTrigger>
+                              <TooltipContent>
+                                <p>Good response</p>
+                              </TooltipContent>
+                            </Tooltip>
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <Button
+                                  variant="ghost"
+                                  size="icon"
+                                  className="h-7 w-7"
+                                >
+                                  <ThumbsDown className="h-4 w-4" />
+                                </Button>
+                              </TooltipTrigger>
+                              <TooltipContent>
+                                <p>Bad response</p>
+                              </TooltipContent>
+                            </Tooltip>
+                          </TooltipProvider>
+                        </div>
+                      )}
                   </div>
                 ))}
                 {isLoading && (
