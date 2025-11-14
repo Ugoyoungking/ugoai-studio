@@ -1,3 +1,52 @@
 {
-  "placeholderImages": []
+  "placeholderImages": [
+    {
+      "id": "img_realistic_1",
+      "description": "A hyper-realistic portrait of a futuristic astronaut.",
+      "imageUrl": "https://images.unsplash.com/photo-1749215366136-55315f1347e1?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw2fHxmdXR1cmlzdGljJTIwYXN0cm9uYXV0fGVufDB8fHx8MTc2MzE1NzU4N3ww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "futuristic astronaut"
+    },
+    {
+      "id": "img_3d_1",
+      "description": "A 3D render of a crystalline city on an alien planet.",
+      "imageUrl": "https://images.unsplash.com/photo-1613325154832-39744054c1cf?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzfHxjcnlzdGFsbGluZSUyMGNpdHl8ZW58MHx8fHwxNzYzMTU3NTg3fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "crystalline city"
+    },
+    {
+      "id": "img_anime_1",
+      "description": "An anime-style character summoning a mythical creature.",
+      "imageUrl": "https://images.unsplash.com/photo-1735006268811-bec33f3e874e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzfHxhbmltZSUyMHN1bW1vbmVyfGVufDB8fHx8MTc2MzE1NzU4N3ww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "anime summoner"
+    },
+    {
+      "id": "img_logo_1",
+      "description": "A minimalist logo for a tech startup named 'Neura'.",
+      "imageUrl": "https://images.unsplash.com/photo-1760037028517-e5cc6e3ebd3e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzfHxtaW5pbWFsaXN0JTIwbG9nb3xlbnwwfHx8fDE3NjMxMDU0OTV8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "minimalist logo"
+    },
+    {
+      "id": "img_luxury_1",
+      "description": "A luxury watch with intricate details on a velvet cushion.",
+      "imageUrl": "https://images.unsplash.com/photo-1636639818651-d97365346a5c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw2fHxsdXh1cnklMjB3YXRjaHxlbnwwfHx8fDE3NjMxMzM0OTZ8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "luxury watch"
+    },
+    {
+      "id": "img_abstract_1",
+      "description": "An abstract painting with swirling colors and bold strokes.",
+      "imageUrl": "https://images.unsplash.com/flagged/photo-1567934150921-7632371abb32?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxhYnN0cmFjdCUyMHBhaW50aW5nfGVufDB8fHx8MTc2MzA0MTEwM3ww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "abstract painting"
+    },
+    {
+      "id": "img_fantasy_1",
+      "description": "A sprawling fantasy landscape with floating islands and dragons.",
+      "imageUrl": "https://images.unsplash.com/photo-1514539079130-25950c84af65?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxmYW50YXN5JTIwbGFuZHNjYXBlfGVufDB8fHx8MTc2MzA1MzEyMXww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "fantasy landscape"
+    },
+    {
+      "id": "img_cyberpunk_1",
+      "description": "A neon-lit cyberpunk city street at night in the rain.",
+      "imageUrl": "https://images.unsplash.com/photo-1515036551567-bf1198cccc35?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxjeWJlcnB1bmslMjBzdHJlZXR8ZW58MHx8fHwxNzYzMTU3NTg3fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "cyberpunk street"
+    }
+  ]
 }
