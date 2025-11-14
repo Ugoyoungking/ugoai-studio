@@ -212,9 +212,23 @@ export default function ChatPage() {
   }, [messages]);
 
   const renderMessageContent = (content: string) => {
-    const tokens = marked.lexer(content);
     const renderer = new marked.Renderer();
+    renderer.code = (code, lang) => {
+      // This is a bit of a hack to pass the code to a React component
+      // We'll use a placeholder and then replace it.
+      const id = `code-block-${Math.random().toString(36).substring(7)}`;
+      return `<div id="${id}" data-lang="${lang}" data-code="${encodeURIComponent(
+        code
+      )}"></div>`;
+    };
+
+    const parsedHtml = marked(content, { renderer });
     
+    // After parsing, we can't directly render the HTML with React components.
+    // So, we'll need to parse the HTML string and replace placeholders.
+    // This is complex to do safely. A better approach is to parse tokens.
+
+    const tokens = marked.lexer(content);
     return tokens.map((token, index) => {
       if (token.type === 'code') {
         return (
@@ -225,11 +239,9 @@ export default function ChatPage() {
           />
         );
       }
-      
       // For other token types, render them as HTML.
       // We need to wrap the single token in a `tokens` array with a `links` property.
-      const html = marked.parser([token], { renderer });
-
+      const html = marked.parser([token], { renderer: new marked.Renderer() });
       return (
         <div
           key={index}
@@ -351,11 +363,11 @@ export default function ChatPage() {
               className="h-[calc(100vh-18rem)]"
               ref={scrollAreaRef as any}
             >
-              <div className="p-6 space-y-4">
+              <div className="p-6 space-y-8">
                 {messages.map((message, index) => (
                   <div
                     key={index}
-                    className={`flex flex-col items-start gap-2 group/message ${
+                    className={`flex flex-col items-start gap-3 group/message ${
                       message.role === 'user' ? 'items-end' : ''
                     }`}
                   >
@@ -370,7 +382,7 @@ export default function ChatPage() {
                         </div>
                       )}
                       <div
-                        className={`max-w-2xl rounded-lg px-4 py-3 text-sm prose dark:prose-invert prose-p:my-2 prose-headings:my-3 prose-pre:p-0 prose-pre:bg-transparent prose-pre:border-0 ${
+                        className={`max-w-2xl rounded-lg px-4 py-3 text-sm prose dark:prose-invert prose-p:my-3 prose-headings:my-4 prose-pre:p-0 prose-pre:bg-transparent prose-pre:border-0 ${
                           message.role === 'user'
                             ? 'bg-primary text-primary-foreground'
                             : 'bg-muted'
