@@ -55,7 +55,7 @@ export default function HowToUsePage() {
             To save your chats, generated images, and other creations, you will need to sign up for a free account. This will give you access to your personal workspace where you can manage all your projects.
           </p>
         </div>
-      </ai>
+      </main>
       <footer className="container mx-auto px-4 sm:px-6 py-8">
         <div className="flex flex-col sm:flex-row justify-between items-center">
          <div className="text-sm text-muted-foreground">
