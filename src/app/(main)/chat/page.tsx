@@ -258,37 +258,52 @@ export default function ChatPage() {
 
   const renderMessageContent = (content: string) => {
     const renderer = new marked.Renderer();
+    const originalCodeRenderer = renderer.code;
+    const originalTableRenderer = renderer.table;
 
-    // Custom table rendering for mobile responsiveness
     renderer.table = (header, body) => {
       return `<div class="table-wrapper"><table class="w-full"><thead>${header}</thead><tbody>${body}</tbody></table></div>`;
     };
 
-    // Custom code block rendering to use SyntaxHighlighter
-    renderer.code = (code, lang) => {
-      // This is a placeholder that we'll replace.
-      // The actual rendering happens in the map function below.
-      return `<pre><code class="language-${lang}">${code}</code></pre>`;
+    renderer.code = (code, lang, escaped) => {
+      const id = `code-${Math.random().toString(36).substring(7)}`;
+      // Store code blocks to be rendered as React components
+      (window as any).__codeBlocks = (window as any).__codeBlocks || {};
+      (window as any).__codeBlocks[id] = { lang, code };
+      return `<div id="${id}" class="code-placeholder"></div>`;
     };
     
-    const rawHtml = marked(content, { renderer });
+    const html = marked(content, { renderer });
 
-    // Since marked doesn't support async or component rendering directly,
-    // we use a trick: parse it to HTML, then use a regex to find and replace
-    // our code block placeholders with the actual React component.
-    const parts = rawHtml.split(/(<pre><code class="language-.*">[\s\S]*?<\/code><\/pre>)/g);
+    // This is a bit of a hack, but it's the most reliable way to inject React components
+    // into the dangerouslySetInnerHTML. We'll find our placeholders and render the components there.
+    useEffect(() => {
+        if ((window as any).__codeBlocks) {
+            Object.keys((window as any).__codeBlocks).forEach(id => {
+                const placeholder = document.getElementById(id);
+                if (placeholder) {
+                    const { lang, code } = (window as any).__codeBlocks[id];
+                    const root = (window as any).ReactDOM.createRoot(placeholder);
+                    root.render(<CodeBlock lang={lang} code={code} />);
+                }
+            });
+            // Clean up to avoid memory leaks
+            (window as any).__codeBlocks = {};
+        }
+    }, [content]);
 
-    return parts.map((part, index) => {
-      const codeBlockMatch = part.match(/<pre><code class="language-(.*?)">([\s\S]*?)<\/code><\/pre>/);
-      if (codeBlockMatch) {
-        const lang = codeBlockMatch[1];
-        // The content is HTML-encoded by marked, so we need to decode it
-        const code = new DOMParser().parseFromString(codeBlockMatch[2], "text/html").documentElement.textContent || "";
-        return <CodeBlock key={index} lang={lang} code={code} />;
-      }
-      // Render other HTML parts as usual
-      return <div key={index} dangerouslySetInnerHTML={{ __html: part }} />;
-    });
+
+    // Need to load react-dom/client script if it's not already there.
+    // This is a one-time operation.
+     useEffect(() => {
+        if (!(window as any).ReactDOM) {
+            const script = document.createElement('script');
+            script.src = "https://unpkg.com/react-dom@18/umd/react-dom.development.js";
+            document.head.appendChild(script);
+        }
+    }, [])
+
+    return <div dangerouslySetInnerHTML={{ __html: html }} />;
   };
 
   return (
