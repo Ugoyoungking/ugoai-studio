@@ -98,19 +98,51 @@ export default function LandingPage() {
             </div>
           </div>
         </section>
+         <section id="faq" className="py-20 sm:py-24">
+          <div className="container mx-auto px-4 sm:px-6">
+            <div className="text-center mb-12">
+              <h2 className="text-3xl sm:text-4xl font-bold font-headline tracking-tight">
+                Have Questions?
+              </h2>
+              <p className="mt-4 text-lg text-muted-foreground max-w-2xl mx-auto">
+                Find answers to common questions about UGO AI Studio.
+              </p>
+               <div className="mt-8 flex justify-center">
+                <Button asChild>
+                  <Link href="/faq">
+                    Read our FAQ
+                  </Link>
+                </Button>
+              </div>
+            </div>
+          </div>
+        </section>
+
       </main>
 
       <footer className="container mx-auto px-4 sm:px-6 py-8">
         <div className="flex flex-col sm:flex-row justify-between items-center">
-          <p className="text-sm text-muted-foreground">
-            © {new Date().getFullYear()} UGO AI Studio. All rights reserved.
-          </p>
+         <div className="text-sm text-muted-foreground">
+            © {new Date().getFullYear()} UGO AI Studio. Made by{" "}
+            <a
+              href="https://ugoyoungking.github.io/portfolio/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-medium text-foreground hover:underline"
+            >
+              Ugoyoungking
+            </a>
+            .
+          </div>
           <div className="flex gap-4 mt-4 sm:mt-0">
-            <Link href="#" className="text-sm text-muted-foreground hover:text-foreground">
+            <Link href="/terms" className="text-sm text-muted-foreground hover:text-foreground">
               Terms
             </Link>
-            <Link href="#" className="text-sm text-muted-foreground hover:text-foreground">
+             <Link href="/privacy" className="text-sm text-muted-foreground hover:text-foreground">
               Privacy
+            </Link>
+             <Link href="/how-to-use" className="text-sm text-muted-foreground hover:text-foreground">
+              How to Use
             </Link>
           </div>
         </div>
