@@ -105,7 +105,6 @@ const CodeBlock = ({
           customStyle={{
             margin: 0,
             padding: '1rem',
-            backgroundColor: 'transparent',
           }}
           codeTagProps={{
             style: {
@@ -140,7 +139,7 @@ const ChatMessage = ({ content }: { content: string }) => {
           const code = codeMatch[2].replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&').replace(/&quot;/g, '"');
           return <CodeBlock key={index} lang={lang} code={code} />;
         } else {
-          return <div key={index} dangerouslySetInnerHTML={{ __html: part }} />;
+          return <div key={index} className="table-wrapper" dangerouslySetInnerHTML={{ __html: part }} />;
         }
       })}
     </div>
@@ -545,5 +544,7 @@ export default function ChatPage() {
     </div>
   );
 }
+
+    
 
     
