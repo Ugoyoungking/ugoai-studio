@@ -120,6 +120,55 @@ const CodeBlock = ({
   );
 };
 
+
+const ChatMessage = ({ content }: { content: string }) => {
+  const codeBlocksRef = useRef<Record<string, { lang: string; code: string }>>({});
+  
+  const renderer = new marked.Renderer();
+  renderer.table = (header, body) => {
+    return `<div class="table-wrapper"><table class="w-full"><thead>${header}</thead><tbody>${body}</tbody></table></div>`;
+  };
+
+  renderer.code = (code, lang) => {
+    const id = `code-${Math.random().toString(36).substring(7)}`;
+    codeBlocksRef.current[id] = { lang: lang || '', code };
+    return `<div id="${id}" class="code-placeholder"></div>`;
+  };
+  
+  const html = marked(content, { renderer });
+
+  useEffect(() => {
+    // Need to load react-dom/client script if it's not already there for the dynamic rendering.
+    if (!(window as any).ReactDOM) {
+        const script = document.createElement('script');
+        script.src = "https://unpkg.com/react-dom@18/umd/react-dom.development.js";
+        script.onload = renderCodeBlocks; 
+        document.head.appendChild(script);
+    } else {
+        renderCodeBlocks();
+    }
+    
+    function renderCodeBlocks() {
+      const codeBlocks = codeBlocksRef.current;
+      if ((window as any).ReactDOM && codeBlocks) {
+        Object.keys(codeBlocks).forEach(id => {
+          const placeholder = document.getElementById(id);
+          if (placeholder) {
+            const { lang, code } = codeBlocks[id];
+            const root = (window as any).ReactDOM.createRoot(placeholder);
+            root.render(<CodeBlock lang={lang} code={code} />);
+          }
+        });
+        // We don't clear the ref here, as it might be needed for re-renders,
+        // although this component should ideally re-mount for new content.
+      }
+    }
+  }, [content]);
+
+  return <div dangerouslySetInnerHTML={{ __html: html }} />;
+};
+
+
 export default function ChatPage() {
   const {toast} = useToast();
   const [chats, setChats] = useState<Chat[]>([]);
@@ -256,55 +305,6 @@ export default function ChatPage() {
     }
   }, [activeChat?.messages]);
 
-  const renderMessageContent = (content: string) => {
-    const renderer = new marked.Renderer();
-    const originalCodeRenderer = renderer.code;
-    const originalTableRenderer = renderer.table;
-
-    renderer.table = (header, body) => {
-      return `<div class="table-wrapper"><table class="w-full"><thead>${header}</thead><tbody>${body}</tbody></table></div>`;
-    };
-
-    renderer.code = (code, lang, escaped) => {
-      const id = `code-${Math.random().toString(36).substring(7)}`;
-      // Store code blocks to be rendered as React components
-      (window as any).__codeBlocks = (window as any).__codeBlocks || {};
-      (window as any).__codeBlocks[id] = { lang, code };
-      return `<div id="${id}" class="code-placeholder"></div>`;
-    };
-    
-    const html = marked(content, { renderer });
-
-    // This is a bit of a hack, but it's the most reliable way to inject React components
-    // into the dangerouslySetInnerHTML. We'll find our placeholders and render the components there.
-    useEffect(() => {
-        if ((window as any).__codeBlocks) {
-            Object.keys((window as any).__codeBlocks).forEach(id => {
-                const placeholder = document.getElementById(id);
-                if (placeholder) {
-                    const { lang, code } = (window as any).__codeBlocks[id];
-                    const root = (window as any).ReactDOM.createRoot(placeholder);
-                    root.render(<CodeBlock lang={lang} code={code} />);
-                }
-            });
-            // Clean up to avoid memory leaks
-            (window as any).__codeBlocks = {};
-        }
-    }, [content]);
-
-
-    // Need to load react-dom/client script if it's not already there.
-    // This is a one-time operation.
-     useEffect(() => {
-        if (!(window as any).ReactDOM) {
-            const script = document.createElement('script');
-            script.src = "https://unpkg.com/react-dom@18/umd/react-dom.development.js";
-            document.head.appendChild(script);
-        }
-    }, [])
-
-    return <div dangerouslySetInnerHTML={{ __html: html }} />;
-  };
 
   return (
     <div className="grid h-[calc(100vh-6rem)] w-full grid-cols-1 md:grid-cols-[300px_1fr] gap-4">
@@ -457,7 +457,7 @@ export default function ChatPage() {
                             : 'bg-muted'
                         }`}
                       >
-                        <div>{renderMessageContent(message.content)}</div>
+                         <ChatMessage content={message.content} />
                       </div>
                     </div>
                     {message.role === 'model' &&
