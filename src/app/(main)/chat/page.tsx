@@ -30,6 +30,7 @@ import {ScrollArea} from '@/components/ui/scroll-area';
 import {Badge} from '@/components/ui/badge';
 import {chat} from '@/ai/flows/chat-flow';
 import type {ChatInput} from '@/ai/flows/chat-flow.schema';
+import {generateChatTitle} from '@/ai/flows/generate-chat-title-flow';
 import {useToast} from '@/hooks/use-toast';
 import {
   Tooltip,
@@ -37,10 +38,18 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
+import {formatDistanceToNow} from 'date-fns';
 
 type Message = {
   role: 'user' | 'model';
   content: string;
+};
+
+type Chat = {
+  id: string;
+  title: string;
+  messages: Message[];
+  createdAt: Date;
 };
 
 const CodeBlock = ({
@@ -111,24 +120,32 @@ const CodeBlock = ({
 
 export default function ChatPage() {
   const {toast} = useToast();
-  const [chats, setChats] = useState([
-    {id: 1, title: 'React Server Components', time: '1h ago', active: true},
-    {id: 2, title: 'Next.js 15 App Router', time: '5m ago', active: false},
-    {id: 3, title: 'Firebase Integration', time: '3h ago', active: false},
-    {id: 4, title: 'Image Generation Prompts', time: '1d ago', active: false},
-    {id: 5, title: 'Social Media Captions', time: '2d ago', active: false},
-  ]);
-
-  const [messages, setMessages] = useState<Message[]>([
-    {
-      role: 'model',
-      content: 'Hello! How can I help you today?',
-    },
-  ]);
-
+  const [chats, setChats] = useState<Chat[]>([]);
+  const [activeChatId, setActiveChatId] = useState<string | null>(null);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const scrollAreaRef = useRef<HTMLDivElement>(null);
+
+  // Initialize with a default chat
+  useEffect(() => {
+    if (chats.length === 0) {
+      handleNewChat();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+  
+  const activeChat = chats.find(chat => chat.id === activeChatId);
+
+  const handleNewChat = () => {
+    const newChat: Chat = {
+      id: `chat_${Date.now()}`,
+      title: 'New Chat',
+      messages: [{role: 'model', content: 'Hello! How can I help you today?'}],
+      createdAt: new Date(),
+    };
+    setChats(prev => [newChat, ...prev]);
+    setActiveChatId(newChat.id);
+  };
 
   const handleSendMessage = async (
     e: React.FormEvent,
@@ -136,59 +153,85 @@ export default function ChatPage() {
   ) => {
     e.preventDefault();
     const currentMessage = messageToSend || input;
-    if (!currentMessage.trim()) return;
+    if (!currentMessage.trim() || !activeChatId) return;
 
-    if (!messageToSend) {
+    const activeChatIndex = chats.findIndex(c => c.id === activeChatId);
+    if (activeChatIndex === -1) return;
+
+    let updatedMessages: Message[];
+
+    if (messageToSend) {
+       // This is a regeneration
+      updatedMessages = [...chats[activeChatIndex].messages.slice(0, -1)];
+    } else {
+      // This is a new message
       const userMessage: Message = {role: 'user', content: currentMessage};
-      setMessages(prev => [...prev, userMessage]);
-      setInput('');
+      updatedMessages = [...chats[activeChatIndex].messages, userMessage];
     }
+    
+    let tempTitle = chats[activeChatIndex].title;
+    const isNewChat = chats[activeChatIndex].messages.length <= 1;
 
+    // Update UI immediately
+    const updatedChats = [...chats];
+    updatedChats[activeChatIndex] = {
+      ...updatedChats[activeChatIndex],
+      messages: updatedMessages,
+    };
+    setChats(updatedChats);
+    setInput('');
     setIsLoading(true);
 
-    const chatHistory: ChatInput['history'] = messages
-      .filter(
-        msg =>
-          !(
-            messageToSend &&
-            msg.role === 'model' &&
-            messages.indexOf(msg) === messages.length - 1
-          )
-      )
-      .map(msg => ({
-        role: msg.role as 'user' | 'model',
-        content: [{text: msg.content}],
-      }));
-
     try {
+      // Generate title for new chats
+      if (isNewChat) {
+        generateChatTitle({message: currentMessage}).then(({title}) => {
+          setChats(prev =>
+            prev.map(c => (c.id === activeChatId ? {...c, title} : c))
+          );
+        });
+      }
+
+      const chatHistory: ChatInput['history'] = updatedMessages
+        .slice(0, -1) // Exclude the last message for regeneration context
+        .map(msg => ({
+          role: msg.role as 'user' | 'model',
+          content: [{text: msg.content}],
+        }));
+
       const result = await chat({
         history: chatHistory,
         message: currentMessage,
       });
+
       const aiMessage: Message = {role: 'model', content: result.message};
-      if (messageToSend) {
-        setMessages(prev => [...prev.slice(0, -1), aiMessage]);
-      } else {
-        setMessages(prev => [...prev, aiMessage]);
-      }
+       setChats(prev =>
+        prev.map(c =>
+          c.id === activeChatId ? {...c, messages: [...updatedMessages, aiMessage]} : c
+        )
+      );
+
     } catch (error) {
       console.error('Error getting AI response:', error);
-      const errorMessage: Message = {
+       const errorMessage: Message = {
         role: 'model',
         content: 'Sorry, I ran into an error. Please try again.',
       };
-      if (messageToSend) {
-        setMessages(prev => [...prev.slice(0, -1), errorMessage]);
-      } else {
-        setMessages(prev => [...prev, errorMessage]);
-      }
+      setChats(prev =>
+        prev.map(c =>
+          c.id === activeChatId ? {...c, messages: [...updatedMessages, errorMessage]} : c
+        )
+      );
     } finally {
       setIsLoading(false);
     }
   };
 
   const handleRegenerate = (e: React.FormEvent) => {
-    const lastUserMessage = messages.filter(m => m.role === 'user').pop();
+    if (!activeChat) return;
+    const lastUserMessage = activeChat.messages
+      .filter(m => m.role === 'user')
+      .pop();
     if (lastUserMessage) {
       handleSendMessage(e, lastUserMessage.content);
     }
@@ -209,7 +252,7 @@ export default function ChatPage() {
         behavior: 'smooth',
       });
     }
-  }, [messages]);
+  }, [activeChat?.messages]);
 
   const renderMessageContent = (content: string) => {
     const tokens = marked.lexer(content);
@@ -223,13 +266,8 @@ export default function ChatPage() {
           />
         );
       }
-      const html = marked.parser([token], { renderer: new marked.Renderer() });
-      return (
-        <div
-          key={index}
-          dangerouslySetInnerHTML={{ __html: html }}
-        />
-      );
+      const html = marked.parser([token], {renderer: new marked.Renderer()});
+      return <div key={index} dangerouslySetInnerHTML={{__html: html}} />;
     });
   };
 
@@ -241,7 +279,7 @@ export default function ChatPage() {
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
-                <Button size="icon" variant="ghost">
+                <Button size="icon" variant="ghost" onClick={handleNewChat}>
                   <PlusCircle className="h-5 w-5" />
                 </Button>
               </TooltipTrigger>
@@ -258,23 +296,26 @@ export default function ChatPage() {
                 <div
                   key={chatItem.id}
                   className={`flex items-start justify-between p-3 rounded-lg cursor-pointer transition-colors group ${
-                    chatItem.active
+                    chatItem.id === activeChatId
                       ? 'bg-primary/10 text-primary'
                       : 'hover:bg-muted'
                   }`}
+                  onClick={() => setActiveChatId(chatItem.id)}
                 >
-                  <div className="flex flex-col gap-1">
-                    <span className="font-medium text-sm leading-tight">
+                  <div className="flex flex-col gap-1 overflow-hidden">
+                    <span className="font-medium text-sm leading-tight truncate">
                       {chatItem.title}
                     </span>
                     <span
                       className={`text-xs ${
-                        chatItem.active
+                        chatItem.id === activeChatId
                           ? 'text-primary/80'
                           : 'text-muted-foreground'
                       }`}
                     >
-                      {chatItem.time}
+                      {formatDistanceToNow(chatItem.createdAt, {
+                        addSuffix: true,
+                      })}
                     </span>
                   </div>
                   <div className="opacity-0 group-hover:opacity-100 transition-opacity flex gap-1">
@@ -299,6 +340,15 @@ export default function ChatPage() {
                             size="icon"
                             variant="ghost"
                             className="h-7 w-7"
+                            onClick={e => {
+                              e.stopPropagation();
+                              setChats(prev => prev.filter(c => c.id !== chatItem.id));
+                              if(activeChatId === chatItem.id && chats.length > 1) {
+                                setActiveChatId(chats.find(c => c.id !== chatItem.id)?.id || null)
+                              } else if (chats.length <=1) {
+                                handleNewChat();
+                              }
+                            }}
                           >
                             <Trash className="h-4 w-4" />
                           </Button>
@@ -320,10 +370,12 @@ export default function ChatPage() {
           <CardHeader className="flex flex-row items-center justify-between p-4 border-b">
             <div className="flex items-center gap-3">
               <div className="flex flex-col">
-                <CardTitle className="text-lg">AI Chat</CardTitle>
+                <CardTitle className="text-lg truncate">
+                  {activeChat?.title || 'AI Chat'}
+                </CardTitle>
                 <div className="text-xs text-muted-foreground flex items-center gap-2 mt-1">
                   <Badge variant="outline">Developer Mode</Badge>
-                  <span>{messages.length} messages</span>
+                  <span>{activeChat?.messages.length || 0} messages</span>
                 </div>
               </div>
             </div>
@@ -346,7 +398,7 @@ export default function ChatPage() {
               ref={scrollAreaRef as any}
             >
               <div className="p-6 space-y-12">
-                {messages.map((message, index) => (
+                {activeChat?.messages.map((message, index) => (
                   <div
                     key={index}
                     className={`flex flex-col items-start gap-3 group/message ${
@@ -370,11 +422,11 @@ export default function ChatPage() {
                             : 'bg-muted'
                         }`}
                       >
-                         <div>{renderMessageContent(message.content)}</div>
+                        <div>{renderMessageContent(message.content)}</div>
                       </div>
                     </div>
                     {message.role === 'model' &&
-                      index === messages.length - 1 &&
+                      index === activeChat.messages.length - 1 &&
                       !isLoading && (
                         <div className="flex gap-1 self-start ml-12 -mt-1">
                           <TooltipProvider>
@@ -461,13 +513,13 @@ export default function ChatPage() {
                 onChange={e => setInput(e.target.value)}
                 placeholder="Ask anything..."
                 className="pr-12 h-12"
-                disabled={isLoading}
+                disabled={isLoading || !activeChatId}
               />
               <Button
                 type="submit"
                 size="icon"
                 className="absolute right-2.5 top-1/2 -translate-y-1/2 h-9 w-9"
-                disabled={isLoading}
+                disabled={isLoading || !activeChatId}
               >
                 <Send className="h-4 w-4" />
                 <span className="sr-only">Send</span>
