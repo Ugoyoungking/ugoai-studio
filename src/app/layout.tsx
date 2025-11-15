@@ -6,6 +6,7 @@ import { FirebaseProvider } from '@/firebase/provider';
 export const metadata: Metadata = {
   title: 'UGO AI Studio',
   description: 'Your personal AI-powered creation suite.',
+  manifest: '/manifest.json',
 };
 
 export default function RootLayout({

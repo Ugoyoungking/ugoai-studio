@@ -1,0 +1,16 @@
+{
+  "name": "UGO AI Studio",
+  "short_name": "UGO AI",
+  "description": "Your personal AI-powered creation suite.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#E8EAF6",
+  "theme_color": "#3F51B5",
+  "icons": [
+    {
+      "src": "/logo.svg",
+      "sizes": "48x48 72x72 96x96 128x128 256x256 512x512",
+      "type": "image/svg+xml"
+    }
+  ]
+}
