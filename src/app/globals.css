@@ -142,4 +142,12 @@
   .dark .prose tr:nth-child(even) {
     @apply bg-background/50;
   }
+
+  .prose div[dangerouslySetInnerHTML] > table {
+    @apply w-full my-4 border-collapse;
+    display: block;
+    overflow-x: auto;
+  }
 }
+
+    

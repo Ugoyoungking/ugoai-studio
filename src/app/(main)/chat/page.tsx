@@ -430,7 +430,7 @@ export default function ChatPage() {
                         </div>
                       )}
                       <div
-                        className={`max-w-2xl rounded-lg px-4 py-3 text-sm prose dark:prose-invert prose-p:leading-relaxed prose-a:underline prose-a:underline-offset-4 prose-p:my-3 prose-headings:my-4 prose-pre:p-0 prose-pre:bg-transparent prose-pre:border-0 ${
+                        className={`max-w-full rounded-lg px-4 py-3 text-sm prose dark:prose-invert prose-p:leading-relaxed prose-a:underline prose-a:underline-offset-4 prose-p:my-3 prose-headings:my-4 prose-pre:p-0 prose-pre:bg-transparent prose-pre:border-0 ${
                           message.role === 'user'
                             ? 'bg-primary text-primary-foreground'
                             : 'bg-muted'
@@ -545,3 +545,5 @@ export default function ChatPage() {
     </div>
   );
 }
+
+    
