@@ -258,23 +258,36 @@ export default function ChatPage() {
 
   const renderMessageContent = (content: string) => {
     const renderer = new marked.Renderer();
+
+    // Custom table rendering for mobile responsiveness
     renderer.table = (header, body) => {
       return `<div class="table-wrapper"><table class="w-full"><thead>${header}</thead><tbody>${body}</tbody></table></div>`;
     };
+
+    // Custom code block rendering to use SyntaxHighlighter
+    renderer.code = (code, lang) => {
+      // This is a placeholder that we'll replace.
+      // The actual rendering happens in the map function below.
+      return `<pre><code class="language-${lang}">${code}</code></pre>`;
+    };
     
-    const tokens = marked.lexer(content);
-    return tokens.map((token, index) => {
-      if (token.type === 'code') {
-        return (
-          <CodeBlock
-            key={index}
-            lang={token.lang}
-            code={token.text}
-          />
-        );
+    const rawHtml = marked(content, { renderer });
+
+    // Since marked doesn't support async or component rendering directly,
+    // we use a trick: parse it to HTML, then use a regex to find and replace
+    // our code block placeholders with the actual React component.
+    const parts = rawHtml.split(/(<pre><code class="language-.*">[\s\S]*?<\/code><\/pre>)/g);
+
+    return parts.map((part, index) => {
+      const codeBlockMatch = part.match(/<pre><code class="language-(.*?)">([\s\S]*?)<\/code><\/pre>/);
+      if (codeBlockMatch) {
+        const lang = codeBlockMatch[1];
+        // The content is HTML-encoded by marked, so we need to decode it
+        const code = new DOMParser().parseFromString(codeBlockMatch[2], "text/html").documentElement.textContent || "";
+        return <CodeBlock key={index} lang={lang} code={code} />;
       }
-      const html = marked.parser([token], { renderer });
-      return <div key={index} dangerouslySetInnerHTML={{__html: html}} />;
+      // Render other HTML parts as usual
+      return <div key={index} dangerouslySetInnerHTML={{ __html: part }} />;
     });
   };
 
