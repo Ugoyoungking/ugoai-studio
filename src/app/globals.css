@@ -115,6 +115,10 @@
       --tw-prose-invert-th-borders: hsl(var(--border));
       --tw-prose-invert-td-borders: hsl(var(--border));
   }
+   .prose {
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+  }
   .prose pre {
     @apply rounded-lg border bg-muted/50 dark:bg-card/50 whitespace-pre-wrap break-words;
   }

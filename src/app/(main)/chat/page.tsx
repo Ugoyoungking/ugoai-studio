@@ -105,6 +105,7 @@ const CodeBlock = ({
           customStyle={{
             margin: 0,
             padding: '1rem',
+            backgroundColor: 'transparent',
           }}
           codeTagProps={{
             style: {
