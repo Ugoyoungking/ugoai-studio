@@ -115,6 +115,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
+        <meta name="msvalidate.01" content="63A610B3C9552E33F88103CB9AD8CF70" />
         {schemas.map((schema, index) => (
           <script
             key={index}
