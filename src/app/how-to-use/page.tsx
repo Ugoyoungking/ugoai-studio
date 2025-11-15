@@ -3,8 +3,36 @@ import Image from "next/image"
 import { Button } from "@/components/ui/button"
 
 export default function HowToUsePage() {
+  const howToSchema = {
+      "@context": "https://schema.org",
+      "@type": "HowTo",
+      "name": "How to Build an AI Agent with UGOAI Studio",
+      "step": [
+        {
+          "@type": "HowToStep",
+          "text": "Create an account or sign in."
+        },
+        {
+          "@type": "HowToStep",
+          "text": "Navigate to the 'AI Agents' dashboard."
+        },
+        {
+          "@type": "HowToStep",
+          "text": "Click 'New Agent' and configure the model and instructions."
+        },
+        {
+          "@type": "HowToStep",
+          "text": "Deploy or publish your agent."
+        }
+      ]
+    };
+
   return (
     <div className="flex flex-col min-h-screen bg-background">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(howToSchema) }}
+      />
        <header className="container mx-auto px-4 sm:px-6 py-4 flex items-center justify-between">
         <Link href="/" className="flex items-center gap-2 font-bold text-xl">
           <Image src="/logo.svg" width={28} height={28} alt="UGO AI Studio" />

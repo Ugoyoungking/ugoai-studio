@@ -1,6 +1,5 @@
 import Link from "next/link"
 import { ArrowRight, Bot, FileText, ImageIcon, Type } from "lucide-react"
-
 import { Button } from "@/components/ui/button"
 import {
   Card,
@@ -33,9 +32,82 @@ export default function LandingPage() {
       description: "Enhance your writing with tools for paraphrasing, grammar correction, and idea generation.",
     },
   ]
+  
+  const landingPageSchemas = [
+    {
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      "name": "UGOAI Studio",
+      "alternateName": "UGO AI Studio",
+      "applicationCategory": "AI Platform, SaaS, Developer Tool",
+      "operatingSystem": "Web, Android PWA, iOS PWA",
+      "description": "UGOAI Studio is a next-generation AI creation platform that enables developers, businesses, and creators to build intelligent agents, chatbots, automation workflows, and generative AI tools with models like OpenAI, Gemini, Meta, and more.",
+      "softwareVersion": "1.0.0",
+      "creator": {
+        "@type": "Person",
+        "name": "Ugochukwu Jonathan",
+        "alternateName": "Ugoyoungking",
+        "jobTitle": "Web Developer, AI Engineer, UI/UX Designer",
+        "url": "https://ugoyoungking.github.io/portfolio",
+        "email": "mailto:ugochukwujonathan067@gmail.com",
+        "telephone": "+2349127714886"
+      },
+      "brand": {
+        "@type": "Brand",
+        "name": "UGOAI",
+        "logo": "/logo.png"
+      },
+      "url": "/",
+      "image": "/og-image.png",
+      "keywords": [
+        "AI Studio",
+        "AI Agent Builder",
+        "AI SaaS Platform",
+        "Workflow Automation",
+        "Generative AI Tools",
+        "AI API",
+        "Chatbot Builder",
+        "AI Marketplace",
+        "UGOAI Studio"
+      ],
+      "featureList": [
+        "AI Agent Builder",
+        "RAG Knowledge Base",
+        "Marketplace for AI Tools",
+        "Conversational AI Chatbots",
+        "Image Generation",
+        "Video Generation",
+        "Automation Workflows",
+        "Developer API",
+        "Multi-model support",
+        "PWA Offline Mode"
+      ]
+    },
+    {
+      "@context": "https://schema.org/",
+      "@type": "Product",
+      "name": "UGOAI Studio",
+      "brand": "UGOAI",
+      "description": "A powerful AI platform for building agents, automations, and generative AI tools.",
+      "sku": "UGOAI-STUDIO-001",
+      "category": "AI & Software",
+      "creator": "Ugochukwu Jonathan"
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "WebPage",
+      "name": "UGOAI Studio - AI Creation Platform",
+      "description": "Create AI agents, automation workflows, chatbots, and generative tools using UGOAI Studio.",
+      "url": "/"
+    }
+  ]
 
   return (
     <div className="flex flex-col min-h-screen">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(landingPageSchemas) }}
+      />
       <header className="container mx-auto px-4 sm:px-6 py-4 flex items-center justify-between">
         <Link href="/" className="flex items-center gap-2 font-bold text-xl">
           <Image src="/logo.svg" width={28} height={28} alt="UGO AI Studio" />
