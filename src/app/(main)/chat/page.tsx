@@ -212,22 +212,6 @@ export default function ChatPage() {
   }, [messages]);
 
   const renderMessageContent = (content: string) => {
-    const renderer = new marked.Renderer();
-    renderer.code = (code, lang) => {
-      // This is a bit of a hack to pass the code to a React component
-      // We'll use a placeholder and then replace it.
-      const id = `code-block-${Math.random().toString(36).substring(7)}`;
-      return `<div id="${id}" data-lang="${lang}" data-code="${encodeURIComponent(
-        code
-      )}"></div>`;
-    };
-
-    const parsedHtml = marked(content, { renderer });
-    
-    // After parsing, we can't directly render the HTML with React components.
-    // So, we'll need to parse the HTML string and replace placeholders.
-    // This is complex to do safely. A better approach is to parse tokens.
-
     const tokens = marked.lexer(content);
     return tokens.map((token, index) => {
       if (token.type === 'code') {
@@ -239,8 +223,6 @@ export default function ChatPage() {
           />
         );
       }
-      // For other token types, render them as HTML.
-      // We need to wrap the single token in a `tokens` array with a `links` property.
       const html = marked.parser([token], { renderer: new marked.Renderer() });
       return (
         <div
@@ -382,7 +364,7 @@ export default function ChatPage() {
                         </div>
                       )}
                       <div
-                        className={`max-w-2xl rounded-lg px-4 py-3 text-sm prose dark:prose-invert prose-p:my-3 prose-headings:my-4 prose-pre:p-0 prose-pre:bg-transparent prose-pre:border-0 ${
+                        className={`max-w-2xl rounded-lg px-4 py-3 text-sm prose dark:prose-invert prose-p:leading-relaxed prose-a:underline prose-a:underline-offset-4 prose-p:my-3 prose-headings:my-4 prose-pre:p-0 prose-pre:bg-transparent prose-pre:border-0 ${
                           message.role === 'user'
                             ? 'bg-primary text-primary-foreground'
                             : 'bg-muted'
