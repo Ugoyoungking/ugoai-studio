@@ -122,50 +122,29 @@ const CodeBlock = ({
 
 
 const ChatMessage = ({ content }: { content: string }) => {
-  const codeBlocksRef = useRef<Record<string, { lang: string; code: string }>>({});
-  
-  const renderer = new marked.Renderer();
-  renderer.table = (header, body) => {
-    return `<div class="table-wrapper"><table class="w-full"><thead>${header}</thead><tbody>${body}</tbody></table></div>`;
-  };
+  const html = marked(content, {
+    gfm: true,
+    breaks: true,
+    renderer: new marked.Renderer(),
+  });
 
-  renderer.code = (code, lang) => {
-    const id = `code-${Math.random().toString(36).substring(7)}`;
-    codeBlocksRef.current[id] = { lang: lang || '', code };
-    return `<div id="${id}" class="code-placeholder"></div>`;
-  };
-  
-  const html = marked(content, { renderer });
+  const parts = html.split(/(<pre><code class="language-.*?>.*?<\/code><\/pre>)/gs);
 
-  useEffect(() => {
-    // Need to load react-dom/client script if it's not already there for the dynamic rendering.
-    if (!(window as any).ReactDOM) {
-        const script = document.createElement('script');
-        script.src = "https://unpkg.com/react-dom@18/umd/react-dom.development.js";
-        script.onload = renderCodeBlocks; 
-        document.head.appendChild(script);
-    } else {
-        renderCodeBlocks();
-    }
-    
-    function renderCodeBlocks() {
-      const codeBlocks = codeBlocksRef.current;
-      if ((window as any).ReactDOM && codeBlocks) {
-        Object.keys(codeBlocks).forEach(id => {
-          const placeholder = document.getElementById(id);
-          if (placeholder) {
-            const { lang, code } = codeBlocks[id];
-            const root = (window as any).ReactDOM.createRoot(placeholder);
-            root.render(<CodeBlock lang={lang} code={code} />);
-          }
-        });
-        // We don't clear the ref here, as it might be needed for re-renders,
-        // although this component should ideally re-mount for new content.
-      }
-    }
-  }, [content]);
-
-  return <div dangerouslySetInnerHTML={{ __html: html }} />;
+  return (
+    <div>
+      {parts.map((part, index) => {
+        const codeMatch = part.match(/<pre><code class="language-(.*?)">([\s\S]*)<\/code><\/pre>/s);
+        if (codeMatch) {
+          const lang = codeMatch[1];
+          // Basic unescaping
+          const code = codeMatch[2].replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&').replace(/&quot;/g, '"');
+          return <CodeBlock key={index} lang={lang} code={code} />;
+        } else {
+          return <div key={index} dangerouslySetInnerHTML={{ __html: part }} />;
+        }
+      })}
+    </div>
+  );
 };
 
 
