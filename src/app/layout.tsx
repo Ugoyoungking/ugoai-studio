@@ -2,11 +2,42 @@ import type {Metadata} from 'next';
 import './globals.css';
 import { Toaster } from "@/components/ui/toaster";
 import { FirebaseProvider } from '@/firebase/provider';
+import { URL } from 'url';
 
 export const metadata: Metadata = {
-  title: 'UGO AI Studio',
-  description: 'Your personal AI-powered creation suite.',
+  metadataBase: new URL('https://ugoai-studio.vercel.app'),
+  title: {
+    default: 'UGOAI Studio | Your Personal AI-Powered Creation Suite',
+    template: '%s | UGOAI Studio',
+  },
+  description: 'Unlock your creative potential with a suite of intelligent tools. From writing assistants to image generators, UGO AI Studio has everything you need to create, innovate, and inspire.',
   manifest: '/manifest.json',
+  alternates: {
+    canonical: '/',
+  },
+  openGraph: {
+    title: 'UGOAI Studio | Your Personal AI-Powered Creation Suite',
+    description: 'Unlock your creative potential with a suite of intelligent tools. From writing assistants to image generators, UGO AI Studio has everything you need to create, innovate, and inspire.',
+    url: 'https://ugoai-studio.vercel.app',
+    siteName: 'UGOAI Studio',
+    images: [
+      {
+        url: '/og-image.png', // Must be an absolute URL
+        width: 1200,
+        height: 630,
+        alt: 'UGOAI Studio Banner',
+      },
+    ],
+    locale: 'en_US',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'UGOAI Studio | Your Personal AI-Powered Creation Suite',
+    description: 'Unlock your creative potential with a suite of intelligent tools. From writing assistants to image generators, UGO AI Studio has everything you need to create, innovate, and inspire.',
+    creator: '@ugoyoungking',
+    images: ['/og-image.png'], // Must be an absolute URL
+  },
 };
 
 export default function RootLayout({
@@ -20,8 +51,8 @@ export default function RootLayout({
       "@type": "Organization",
       "name": "UGOAI Studio",
       "alternateName": "UGO AI",
-      "url": "https://ugoai.studio.app",
-      "logo": "https://ugoai.studio.app/logo.png",
+      "url": "https://ugoai-studio.vercel.app",
+      "logo": "https://ugoai-studio.vercel.app/logo.png",
       "founder": {
         "@type": "Person",
         "name": "Ugochukwu Jonathan",
@@ -35,17 +66,17 @@ export default function RootLayout({
       "contactPoint": {
         "@type": "ContactPoint",
         "contactType": "customer support",
-        "email": "support@ugoai.studio.app"
+        "email": "support@ugoai-studio.vercel.app"
       }
     },
     {
       "@context": "https://schema.org",
       "@type": "WebSite",
       "name": "UGOAI Studio",
-      "url": "https://ugoai.studio.app",
+      "url": "https://ugoai-studio.vercel.app",
       "potentialAction": {
         "@type": "SearchAction",
-        "target": "https://ugoai.studio.app/search?q={search_term_string}",
+        "target": "https://ugoai-studio.vercel.app/search?q={search_term_string}",
         "query-input": "required name=search_term_string"
       }
     },
@@ -72,7 +103,7 @@ export default function RootLayout({
           "@type": "ListItem",
           "position": 1,
           "name": "Home",
-          "item": "https://ugoai.studio.app"
+          "item": "https://ugoai-studio.vercel.app"
         }
       ]
     }

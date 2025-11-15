@@ -55,10 +55,10 @@ export default function LandingPage() {
       "brand": {
         "@type": "Brand",
         "name": "UGOAI",
-        "logo": "/logo.png"
+        "logo": "https://ugoai-studio.vercel.app/logo.png"
       },
-      "url": "/",
-      "image": "/og-image.png",
+      "url": "https://ugoai-studio.vercel.app/",
+      "image": "https://ugoai-studio.vercel.app/og-image.png",
       "keywords": [
         "AI Studio",
         "AI Agent Builder",
@@ -98,7 +98,7 @@ export default function LandingPage() {
       "@type": "WebPage",
       "name": "UGOAI Studio - AI Creation Platform",
       "description": "Create AI agents, automation workflows, chatbots, and generative tools using UGOAI Studio.",
-      "url": "/"
+      "url": "https://ugoai-studio.vercel.app/"
     }
   ]
 
