@@ -12,6 +12,9 @@ export const metadata: Metadata = {
   },
   description: 'Unlock your creative potential with a suite of intelligent tools. From writing assistants to image generators, UGO AI Studio has everything you need to create, innovate, and inspire.',
   manifest: '/manifest.json',
+  verification: {
+    google: 'W3MpZ-n3f__nszkbbn7M_8K2F8fttcYJTqwkJrwfX8o',
+  },
   alternates: {
     canonical: '/',
   },
