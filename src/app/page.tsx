@@ -14,6 +14,16 @@ export const metadata: Metadata = {
   title: 'UGOAI Studio | AI Creation Platform for Agents, Workflows & Tools',
   description:
     'Build intelligent agents, chatbots, automation, and generative AI tools with UGOAI Studio. Our platform supports multiple AI models and provides everything you need to innovate.',
+  openGraph: {
+    images: [
+      {
+        url: 'https://image2url.com/images/1763225334695-2ec6f3a1-974a-4506-9923-7bb2d19f5cf6.png',
+        width: 1200,
+        height: 630,
+        alt: 'UGOAI Studio Banner',
+      },
+    ],
+  },
 };
 
 

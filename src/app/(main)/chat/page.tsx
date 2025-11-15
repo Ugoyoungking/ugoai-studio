@@ -98,22 +98,24 @@ const CodeBlock = ({
           </Tooltip>
         </TooltipProvider>
       </div>
-      <SyntaxHighlighter
-        language={lang}
-        style={vscDarkPlus}
-        customStyle={{
-          margin: 0,
-          padding: '1rem',
-          backgroundColor: 'transparent',
-        }}
-        codeTagProps={{
-          style: {
-            fontFamily: 'var(--font-code)',
-          },
-        }}
-      >
-        {String(code)}
-      </SyntaxHighlighter>
+      <div className="overflow-x-auto">
+        <SyntaxHighlighter
+          language={lang}
+          style={vscDarkPlus}
+          customStyle={{
+            margin: 0,
+            padding: '1rem',
+            backgroundColor: 'transparent',
+          }}
+          codeTagProps={{
+            style: {
+              fontFamily: 'var(--font-code)',
+            },
+          }}
+        >
+          {String(code)}
+        </SyntaxHighlighter>
+      </div>
     </div>
   );
 };
@@ -255,6 +257,11 @@ export default function ChatPage() {
   }, [activeChat?.messages]);
 
   const renderMessageContent = (content: string) => {
+    const renderer = new marked.Renderer();
+    renderer.table = (header, body) => {
+      return `<div class="table-wrapper"><table class="w-full"><thead>${header}</thead><tbody>${body}</tbody></table></div>`;
+    };
+    
     const tokens = marked.lexer(content);
     return tokens.map((token, index) => {
       if (token.type === 'code') {
@@ -266,7 +273,7 @@ export default function ChatPage() {
           />
         );
       }
-      const html = marked.parser([token], {renderer: new marked.Renderer()});
+      const html = marked.parser([token], { renderer });
       return <div key={index} dangerouslySetInnerHTML={{__html: html}} />;
     });
   };

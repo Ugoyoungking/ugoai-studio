@@ -17,6 +17,9 @@ export const metadata: Metadata = {
   manifest: '/manifest.json',
   verification: {
     google: 'W3MpZ-n3f__nszkbbn7M_8K2F8fttcYJTqwkJrwfX8o',
+    other: {
+       msvalidate: '63A610B3C9552E33F88103CB9AD8CF70',
+    }
   },
   alternates: {
     canonical: '/',
@@ -118,7 +121,6 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
-        <meta name="msvalidate.01" content="63A610B3C9552E33F88103CB9AD8CF70" />
         {schemas.map((schema, index) => (
           <script
             key={index}
