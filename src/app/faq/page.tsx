@@ -27,7 +27,7 @@ const faqs = [
   },
   {
     question: "Who is behind UGO AI Studio?",
-    answer: "UGO AI Studio is a project developed by Ugoyoungking, a software developer passionate about creating powerful and accessible AI tools. You can view his portfolio for more information."
+    answer: "UGO AI Studio is a project developed by Ugochukwu, a passionate and God-fearing Web Developer and Graphic Designer dedicated to crafting modern, responsive, and user-focused digital experiences. His journey began with HTML and CSS, and over time, he has mastered technologies like JavaScript, React, and Node.js. He takes pride in transforming creative ideas into functional, visually appealing, and high-performing websites that don’t just look great — they make an impact. Every project he builds reflects his commitment to excellence, creativity, and faith-driven purpose."
   },
   {
     question: "How is my data handled?",
@@ -82,7 +82,7 @@ export default function FaqPage() {
               href="https://ugoyoungking.github.io/portfolio/"
               target="_blank"
               rel="noopener noreferrer"
-              className="font-medium text-foreground hover:underline"
+              className="font-medium text-primary hover:underline"
             >
               Ugoyoungking
             </a>

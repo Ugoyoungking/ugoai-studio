@@ -89,7 +89,7 @@ export default function PrivacyPage() {
               href="https://ugoyoungking.github.io/portfolio/"
               target="_blank"
               rel="noopener noreferrer"
-              className="font-medium text-foreground hover:underline"
+              className="font-medium text-primary hover:underline"
             >
               Ugoyoungking
             </a>
