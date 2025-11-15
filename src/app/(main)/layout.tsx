@@ -3,7 +3,8 @@ import { Header } from "@/components/layout/header"
 import { AppSidebar } from "@/components/layout/sidebar"
 import { usePathname } from "next/navigation"
 import { redirect } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
+import { useUser } from "@/firebase/auth/use-user";
 
 
 export default function MainLayout({
@@ -12,23 +13,7 @@ export default function MainLayout({
   children: React.ReactNode
 }>) {
   const pathname = usePathname();
-  // In a real app, you'd use a hook like useUser() from your auth provider
-  const [user, setUser] = useState<{email: string} | null>(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    // Simulate checking for a user session.
-    // In a real app, this would be a call to Firebase Auth.
-    // For now, we'll simulate a logged-out user to enforce the redirect.
-    const checkUser = async () => {
-      // Replace this with: const authUser = await getCurrentUser();
-      await new Promise(resolve => setTimeout(resolve, 50)); // Simulate async check
-      const authUser = null; 
-      setUser(authUser);
-      setLoading(false);
-    }
-    checkUser();
-  }, []);
+  const { user, loading } = useUser();
 
   useEffect(() => {
     if (!loading && !user && pathname !== '/login' && pathname !== '/signup') {

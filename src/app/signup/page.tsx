@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState } from 'react';
@@ -15,7 +14,10 @@ import {
 } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { useToast } from '@/hooks.ts/use-toast';
+import { useToast } from '@/hooks/use-toast';
+import { useAuth } from '@/firebase';
+import { createUserWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
+
 
 export default function SignupPage() {
   const [email, setEmail] = useState('');
@@ -23,30 +25,50 @@ export default function SignupPage() {
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
   const { toast } = useToast();
+  const auth = useAuth();
 
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!auth) return;
     setIsLoading(true);
-    // TODO: Replace with actual Firebase sign-up logic
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    toast({
-      title: 'Account Created (Simulated)',
-      description: 'Redirecting you to the app...',
-    });
-    router.push('/chat');
-    setIsLoading(false);
+    try {
+      await createUserWithEmailAndPassword(auth, email, password);
+      toast({
+        title: 'Account Created',
+        description: 'Redirecting you to the app...',
+      });
+      router.push('/chat');
+    } catch (error: any) {
+       toast({
+        variant: 'destructive',
+        title: 'Sign Up Failed',
+        description: error.message,
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
   
   const handleGoogleSignUp = async () => {
+    if (!auth) return;
     setIsLoading(true);
-    // TODO: Replace with actual Firebase Google sign-up logic
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    toast({
-      title: 'Account Created (Simulated)',
-      description: 'Redirecting you to the app...',
-    });
-    router.push('/chat');
-    setIsLoading(false);
+    try {
+      const provider = new GoogleAuthProvider();
+      await signInWithPopup(auth, provider);
+      toast({
+        title: 'Account Created',
+        description: 'Redirecting you to the app...',
+      });
+      router.push('/chat');
+    } catch (error: any) {
+       toast({
+        variant: 'destructive',
+        title: 'Google Sign-Up Failed',
+        description: error.message,
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (

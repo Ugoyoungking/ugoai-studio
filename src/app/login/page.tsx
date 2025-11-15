@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState } from 'react';
@@ -16,6 +15,8 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
+import { useAuth } from '@/firebase';
+import { signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
@@ -23,30 +24,50 @@ export default function LoginPage() {
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
   const { toast } = useToast();
+  const auth = useAuth();
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!auth) return;
     setIsLoading(true);
-    // TODO: Replace with actual Firebase login logic
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    toast({
-      title: 'Login Successful (Simulated)',
-      description: 'Redirecting you to the app...',
-    });
-    router.push('/chat');
-    setIsLoading(false);
+    try {
+      await signInWithEmailAndPassword(auth, email, password);
+      toast({
+        title: 'Login Successful',
+        description: 'Redirecting you to the app...',
+      });
+      router.push('/chat');
+    } catch (error: any) {
+      toast({
+        variant: 'destructive',
+        title: 'Login Failed',
+        description: error.message,
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
   
   const handleGoogleSignIn = async () => {
+    if (!auth) return;
     setIsLoading(true);
-    // TODO: Replace with actual Firebase Google sign-in logic
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    toast({
-      title: 'Login Successful (Simulated)',
-      description: 'Redirecting you to the app...',
-    });
-    router.push('/chat');
-    setIsLoading(false);
+    try {
+      const provider = new GoogleAuthProvider();
+      await signInWithPopup(auth, provider);
+       toast({
+        title: 'Login Successful',
+        description: 'Redirecting you to the app...',
+      });
+      router.push('/chat');
+    } catch (error: any) {
+      toast({
+        variant: 'destructive',
+        title: 'Google Sign-In Failed',
+        description: error.message,
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
