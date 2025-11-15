@@ -12,14 +12,22 @@ export default function MainLayout({
   children: React.ReactNode
 }>) {
   const pathname = usePathname();
+  // In a real app, you'd use a hook like useUser() from your auth provider
   const [user, setUser] = useState<{email: string} | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // In a real app, you'd fetch the user session.
-    // For now, we'll simulate an unauthenticated user.
-    setUser(null); 
-    setLoading(false);
+    // Simulate checking for a user session.
+    // In a real app, this would be a call to Firebase Auth.
+    // For now, we'll simulate a logged-out user to enforce the redirect.
+    const checkUser = async () => {
+      // Replace this with: const authUser = await getCurrentUser();
+      await new Promise(resolve => setTimeout(resolve, 50)); // Simulate async check
+      const authUser = null; 
+      setUser(authUser);
+      setLoading(false);
+    }
+    checkUser();
   }, []);
 
   useEffect(() => {
@@ -31,7 +39,18 @@ export default function MainLayout({
   if (loading) {
     return (
        <div className="flex min-h-screen w-full flex-col bg-muted/40 items-center justify-center">
-        <p>Loading...</p>
+        <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
+        <p className="mt-4 text-muted-foreground">Loading...</p>
+       </div>
+    );
+  }
+  
+  if (!user) {
+    // This will be shown briefly before the redirect fires.
+    // Or if the redirect fails for some reason.
+    return (
+       <div className="flex min-h-screen w-full flex-col bg-muted/40 items-center justify-center">
+        <p>Redirecting to login...</p>
        </div>
     );
   }
