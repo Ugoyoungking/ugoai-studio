@@ -66,7 +66,7 @@ export default function LandingPage() {
         "logo": "https://image2url.com/images/1763225334695-2ec6f3a1-974a-4506-9923-7bb2d19f5cf6.png"
       },
       "url": "https://ugoai-studio.vercel.app/",
-      "image": "https://ugoai-studio.vercel.app/og-image.png",
+      "image": "https://image2url.com/images/1763225334695-2ec6f3a1-974a-4506-9923-7bb2d19f5cf6.png",
       "keywords": [
         "AI Studio",
         "AI Agent Builder",
@@ -99,7 +99,15 @@ export default function LandingPage() {
       "description": "A powerful AI platform for building agents, automations, and generative AI tools.",
       "sku": "UGOAI-STUDIO-001",
       "category": "AI & Software",
-      "creator": "Ugochukwu Jonathan"
+      "creator": "Ugochukwu Jonathan",
+      "offers": {
+        "@type": "Offer",
+        "url": "https://ugoai-studio.vercel.app/signup",
+        "priceCurrency": "USD",
+        "price": "0.00",
+        "availability": "https://schema.org/InStock",
+        "priceValidUntil": "2025-12-31"
+      }
     },
     {
       "@context": "https://schema.org",
