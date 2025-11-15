@@ -98,7 +98,28 @@ export default function LandingPage() {
             </div>
           </div>
         </section>
-         <section id="faq" className="py-20 sm:py-24">
+
+        <section id="about-dev" className="py-20 sm:py-24">
+          <div className="container mx-auto px-4 sm:px-6">
+            <div className="text-center mb-12">
+              <h2 className="text-3xl sm:text-4xl font-bold font-headline tracking-tight">
+                About the Developer
+              </h2>
+            </div>
+            <div className="max-w-4xl mx-auto text-center">
+              <p className="text-lg text-muted-foreground mb-8">
+                I’m Ugochukwu, a passionate and God-fearing Web Developer and Graphic Designer dedicated to crafting modern, responsive, and user-focused digital experiences. My journey began with HTML and CSS, and over time, I’ve mastered technologies like JavaScript, React, and Node.js. I take pride in transforming creative ideas into functional, visually appealing, and high-performing websites that don’t just look great — they make an impact. Every project I build reflects my commitment to excellence, creativity, and faith-driven purpose.
+              </p>
+              <Button asChild>
+                <a href="https://ugoyoungking.github.io/portfolio/" target="_blank" rel="noopener noreferrer">
+                  View My Portfolio <ArrowRight className="ml-2 h-5 w-5" />
+                </a>
+              </Button>
+            </div>
+          </div>
+        </section>
+
+         <section id="faq" className="py-20 sm:py-24 bg-muted/40">
           <div className="container mx-auto px-4 sm:px-6">
             <div className="text-center mb-12">
               <h2 className="text-3xl sm:text-4xl font-bold font-headline tracking-tight">
