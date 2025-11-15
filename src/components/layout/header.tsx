@@ -2,22 +2,15 @@
 
 import Image from "next/image"
 import Link from "next/link"
-import { usePathname } from "next/navigation"
+import { usePathname, useRouter } from "next/navigation"
 import * as React from "react"
 import {
-  BrainCircuit,
-  Briefcase,
-  ChevronLeft,
-  ChevronRight,
-  FileText,
   Home,
-  Image as ImageIcon,
-  MessageCircle,
   PanelLeft,
   Search,
   Settings,
-  Type,
 } from "lucide-react"
+import { signOut } from "firebase/auth"
 
 import {
   Breadcrumb,
@@ -39,6 +32,10 @@ import {
 import { Input } from "@/components/ui/input"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import { AppSidebar } from "./sidebar"
+import { useUser } from "@/firebase/auth/use-user"
+import { useAuth } from "@/firebase"
+import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar"
+import { useToast } from "@/hooks/use-toast"
 
 const pathToTitleMap: { [key: string]: string } = {
   "/chat": "AI Chat",
@@ -51,6 +48,34 @@ const pathToTitleMap: { [key: string]: string } = {
 
 export function Header() {
   const pathname = usePathname()
+  const router = useRouter()
+  const auth = useAuth()
+  const { user } = useUser()
+  const { toast } = useToast()
+
+  const handleLogout = async () => {
+    if (!auth) return;
+    try {
+      await signOut(auth)
+      toast({
+        title: "Logged Out",
+        description: "You have been successfully logged out.",
+      })
+      router.push("/login")
+    } catch (error) {
+      console.error("Error signing out: ", error)
+      toast({
+        variant: "destructive",
+        title: "Logout Failed",
+        description: "An error occurred while logging out. Please try again.",
+      })
+    }
+  }
+
+  const getInitials = (name?: string | null) => {
+    if (!name) return 'U'
+    return name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+  }
 
   const pathSegments = pathname.split("/").filter(Boolean)
 
@@ -71,7 +96,7 @@ export function Header() {
         <BreadcrumbList>
           <BreadcrumbItem>
             <BreadcrumbLink asChild>
-              <Link href="/">
+              <Link href="/chat">
                 <Home className="h-4 w-4" />
               </Link>
             </BreadcrumbLink>
@@ -104,19 +129,16 @@ export function Header() {
             size="icon"
             className="overflow-hidden rounded-full"
           >
-            <Image
-              src="https://picsum.photos/seed/avatar/32/32"
-              width={36}
-              height={36}
-              alt="Avatar"
-              className="overflow-hidden rounded-full"
-            />
+            <Avatar className="h-9 w-9">
+              <AvatarImage src={user?.photoURL || ''} alt="User Avatar" />
+              <AvatarFallback>{getInitials(user?.displayName || user?.email)}</AvatarFallback>
+            </Avatar>
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
-          <DropdownMenuLabel>My Account</DropdownMenuLabel>
+          <DropdownMenuLabel>{user?.displayName || user?.email}</DropdownMenuLabel>
           <DropdownMenuSeparator />
-          <DropdownMenuItem>
+          <DropdownMenuItem asChild>
             <Link href="/settings" className="flex items-center w-full">
               <Settings className="mr-2 h-4 w-4" />
               Settings
@@ -124,7 +146,9 @@ export function Header() {
           </DropdownMenuItem>
           <DropdownMenuItem>Support</DropdownMenuItem>
           <DropdownMenuSeparator />
-          <DropdownMenuItem>Logout</DropdownMenuItem>
+          <DropdownMenuItem onClick={handleLogout} className="cursor-pointer">
+            Logout
+          </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
     </header>
