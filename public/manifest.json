@@ -1,16 +1,21 @@
 {
-  "name": "UGO AI Studio",
-  "short_name": "UGO AI",
-  "description": "Your personal AI-powered creation suite.",
+  "name": "UGOAI Studio",
+  "short_name": "UGOAI",
+  "description": "Your Personal AI-Powered Creation Suite",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#E8EAF6",
   "theme_color": "#3F51B5",
   "icons": [
     {
-      "src": "/logo.svg",
-      "sizes": "48x48 72x72 96x96 128x128 256x256 512x512",
-      "type": "image/svg+xml"
+      "src": "https://image2url.com/images/1763225334695-2ec6f3a1-974a-4506-9923-7bb2d19f5cf6.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "https://image2url.com/images/1763225334695-2ec6f3a1-974a-4506-9923-7bb2d19f5cf6.png",
+      "sizes": "512x512",
+      "type": "image/png"
     }
   ]
 }

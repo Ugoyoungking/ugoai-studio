@@ -55,7 +55,7 @@ export default function LandingPage() {
       "brand": {
         "@type": "Brand",
         "name": "UGOAI",
-        "logo": "https://ugoai-studio.vercel.app/logo.png"
+        "logo": "https://image2url.com/images/1763225334695-2ec6f3a1-974a-4506-9923-7bb2d19f5cf6.png"
       },
       "url": "https://ugoai-studio.vercel.app/",
       "image": "https://ugoai-studio.vercel.app/og-image.png",

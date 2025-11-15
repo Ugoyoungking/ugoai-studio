@@ -25,7 +25,7 @@ export const metadata: Metadata = {
     siteName: 'UGOAI Studio',
     images: [
       {
-        url: '/og-image.png', // Must be an absolute URL
+        url: 'https://image2url.com/images/1763225334695-2ec6f3a1-974a-4506-9923-7bb2d19f5cf6.png', // Must be an absolute URL
         width: 1200,
         height: 630,
         alt: 'UGOAI Studio Banner',
@@ -39,7 +39,7 @@ export const metadata: Metadata = {
     title: 'UGOAI Studio | Your Personal AI-Powered Creation Suite',
     description: 'Unlock your creative potential with a suite of intelligent tools. From writing assistants to image generators, UGO AI Studio has everything you need to create, innovate, and inspire.',
     creator: '@ugoyoungking',
-    images: ['/og-image.png'], // Must be an absolute URL
+    images: ['https://image2url.com/images/1763225334695-2ec6f3a1-974a-4506-9923-7bb2d19f5cf6.png'], // Must be an absolute URL
   },
 };
 
@@ -55,7 +55,7 @@ export default function RootLayout({
       "name": "UGOAI Studio",
       "alternateName": "UGO AI",
       "url": "https://ugoai-studio.vercel.app",
-      "logo": "https://ugoai-studio.vercel.app/logo.png",
+      "logo": "https://image2url.com/images/1763225334695-2ec6f3a1-974a-4506-9923-7bb2d19f5cf6.png",
       "founder": {
         "@type": "Person",
         "name": "Ugochukwu Jonathan",
