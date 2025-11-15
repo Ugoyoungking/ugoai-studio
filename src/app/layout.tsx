@@ -3,6 +3,9 @@ import './globals.css';
 import { Toaster } from "@/components/ui/toaster";
 import { FirebaseProvider } from '@/firebase/provider';
 import { URL } from 'url';
+import { Inter } from 'next/font/google';
+
+const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://ugoai-studio.vercel.app'),
@@ -123,9 +126,6 @@ export default function RootLayout({
             dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
           />
         ))}
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
         <link rel="icon" href="/logo.svg" type="image/svg+xml" />
          <style>{`
           :root {
@@ -133,7 +133,7 @@ export default function RootLayout({
           }
         `}</style>
       </head>
-      <body className="font-body antialiased">
+      <body className={`${inter.variable} font-body antialiased`}>
         <FirebaseProvider>
           {children}
         </FirebaseProvider>

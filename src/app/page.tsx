@@ -8,6 +8,14 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 import Image from "next/image"
+import type { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: 'UGOAI Studio | AI Creation Platform for Agents, Workflows & Tools',
+  description:
+    'Build intelligent agents, chatbots, automation, and generative AI tools with UGOAI Studio. Our platform supports multiple AI models and provides everything you need to innovate.',
+};
+
 
 export default function LandingPage() {
   const features = [
