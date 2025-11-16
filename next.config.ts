@@ -33,9 +33,16 @@ const nextConfig: NextConfig = {
   },
 };
 
-export default withPWA({
+const pwaConfig = {
   dest: 'public',
   register: true,
   skipWaiting: true,
   disable: process.env.NODE_ENV === 'development',
-})(nextConfig);
+};
+
+// Only wrap with PWA config in production
+const configToExport = process.env.NODE_ENV === 'production' 
+  ? withPWA(pwaConfig)(nextConfig) 
+  : nextConfig;
+
+export default configToExport;
