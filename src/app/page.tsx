@@ -61,6 +61,7 @@ export default function LandingPage() {
       "operatingSystem": "Web, Android PWA, iOS PWA",
       "description": "UGOAI Studio is a next-generation AI creation platform that enables developers, businesses, and creators to build intelligent agents, chatbots, automation workflows, and generative AI tools with models like OpenAI, Gemini, Meta, and more.",
       "softwareVersion": "1.0.0",
+      "image": "https://image2url.com/images/1763225334695-2ec6f3a1-974a-4506-9923-7bb2d19f5cf6.png",
       "creator": {
         "@type": "Person",
         "name": "Ugochukwu Jonathan",
@@ -76,7 +77,6 @@ export default function LandingPage() {
         "logo": "https://image2url.com/images/1763225334695-2ec6f3a1-974a-4506-9923-7bb2d19f5cf6.png"
       },
       "url": "https://ugoai-studio.vercel.app/",
-      "image": "https://image2url.com/images/1763225334695-2ec6f3a1-974a-4506-9923-7bb2d19f5cf6.png",
       "keywords": [
         "AI Studio",
         "AI Agent Builder",
