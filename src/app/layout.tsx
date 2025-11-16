@@ -70,7 +70,10 @@ export default function RootLayout({
       "foundingDate": "2025",
       "address": {
         "@type": "PostalAddress",
-        "addressCountry": "Nigeria"
+        "streetAddress": "123 Innovation Drive",
+        "addressLocality": "Lagos",
+        "postalCode": "100001",
+        "addressCountry": "NG"
       },
       "contactPoint": {
         "@type": "ContactPoint",
