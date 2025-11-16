@@ -105,11 +105,13 @@ export default function LandingPage() {
       "@context": "https://schema.org/",
       "@type": "Product",
       "name": "UGOAI Studio",
-      "brand": "UGOAI",
+      "image": "https://image2url.com/images/1763225334695-2ec6f3a1-974a-4506-9923-7bb2d19f5cf6.png",
       "description": "A powerful AI platform for building agents, automations, and generative AI tools.",
       "sku": "UGOAI-STUDIO-001",
-      "category": "AI & Software",
-      "creator": "Ugochukwu Jonathan",
+      "brand": {
+        "@type": "Brand",
+        "name": "UGOAI"
+      },
       "offers": {
         "@type": "Offer",
         "url": "https://ugoai-studio.vercel.app/signup",
@@ -262,6 +264,9 @@ export default function LandingPage() {
             </Link>
              <Link href="/how-to-use" className="text-sm text-muted-foreground hover:text-foreground">
               How to Use
+            </Link>
+            <Link href="/profile" className="text-sm text-muted-foreground hover:text-foreground">
+              Profile
             </Link>
           </div>
         </div>

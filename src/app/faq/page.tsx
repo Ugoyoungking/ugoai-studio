@@ -133,6 +133,9 @@ export default function FaqPage() {
              <Link href="/how-to-use" className="text-sm text-muted-foreground hover:text-foreground">
               How to Use
             </Link>
+            <Link href="/profile" className="text-sm text-muted-foreground hover:text-foreground">
+              Profile
+            </Link>
           </div>
         </div>
       </footer>
