@@ -2,57 +2,57 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://ugoai-studio.vercel.app/</loc>
-    <lastmod>2024-01-01</lastmod>
+    <lastmod>2024-08-01</lastmod>
     <priority>1.00</priority>
   </url>
   <url>
-    <loc>https://ugoai-studio.vercel.app/chat</loc>
-    <lastmod>2024-01-01</lastmod>
+    <loc>https://ugoai-studio.vercel.app/login</loc>
+    <lastmod>2024-08-01</lastmod>
     <priority>0.80</priority>
   </url>
   <url>
+    <loc>https://ugoai-studio.vercel.app/signup</loc>
+    <lastmod>2024-08-01</lastmod>
+    <priority>0.80</priority>
+  </url>
+  <url>
+    <loc>https://ugoai-studio.vercel.app/chat</loc>
+    <lastmod>2024-08-01</lastmod>
+    <priority>0.90</priority>
+  </url>
+  <url>
     <loc>https://ugoai-studio.vercel.app/image-generator</loc>
-    <lastmod>2024-01-01</lastmod>
+    <lastmod>2024-08-01</lastmod>
     <priority>0.80</priority>
   </url>
   <url>
     <loc>https://ugoai-studio.vercel.app/document-tools</loc>
-    <lastmod>2024-01-01</lastmod>
+    <lastmod>2024-08-01</lastmod>
     <priority>0.80</priority>
   </url>
   <url>
     <loc>https://ugoai-studio.vercel.app/text-tools</loc>
-    <lastmod>2024-01-01</lastmod>
+    <lastmod>2024-08-01</lastmod>
     <priority>0.80</priority>
-  </url>
-    <url>
-    <loc>https://ugoai-studio.vercel.app/login</loc>
-    <lastmod>2024-01-01</lastmod>
-    <priority>0.70</priority>
-  </url>
-  <url>
-    <loc>https://ugoai-studio.vercel.app/signup</loc>
-    <lastmod>2024-01-01</lastmod>
-    <priority>0.70</priority>
   </url>
   <url>
     <loc>https://ugoai-studio.vercel.app/faq</loc>
-    <lastmod>2024-01-01</lastmod>
+    <lastmod>2024-08-01</lastmod>
     <priority>0.70</priority>
   </url>
   <url>
     <loc>https://ugoai-studio.vercel.app/how-to-use</loc>
-    <lastmod>2024-01-01</lastmod>
+    <lastmod>2024-08-01</lastmod>
     <priority>0.70</priority>
-  </url>
-    <url>
-    <loc>https://ugoai-studio.vercel.app/privacy</loc>
-    <lastmod>2024-01-01</lastmod>
-    <priority>0.50</priority>
   </url>
   <url>
     <loc>https://ugoai-studio.vercel.app/terms</loc>
-    <lastmod>2024-01-01</lastmod>
+    <lastmod>2024-08-01</lastmod>
+    <priority>0.50</priority>
+  </url>
+  <url>
+    <loc>https://ugoai-studio.vercel.app/privacy</loc>
+    <lastmod>2024-08-01</lastmod>
     <priority>0.50</priority>
   </url>
 </urlset>
