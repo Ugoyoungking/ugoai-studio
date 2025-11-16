@@ -65,9 +65,9 @@ export default function RootLayout({
       "founder": {
         "@type": "Person",
         "name": "Ugochukwu Jonathan",
-        "alternateName": "Ugoyoungking"
+        "url": "https://ugoai-studio.vercel.app/profile"
       },
-      "foundingDate": "2025",
+      "foundingDate": "2024",
       "address": {
         "@type": "PostalAddress",
         "streetAddress": "123 Innovation Drive",
@@ -90,21 +90,6 @@ export default function RootLayout({
         "@type": "SearchAction",
         "target": "https://ugoai-studio.vercel.app/search?q={search_term_string}",
         "query-input": "required name=search_term_string"
-      }
-    },
-     {
-      "@context": "https://schema.org",
-      "@type": "Person",
-      "name": "Ugochukwu Jonathan",
-      "alternateName": "Ugoyoungking",
-      "jobTitle": "Web Developer, AI Engineer",
-      "url": "https://ugoyoungking.github.io/portfolio",
-      "sameAs": "https://www.truelancer.com/freelancer/tlusera2eae11",
-      "email": "mailto:ugochukwujonathan067@gmail.com",
-      "telephone": "+2349127714886",
-      "worksFor": {
-        "@type": "Organization",
-        "name": "UGOAI Studio"
       }
     },
     {

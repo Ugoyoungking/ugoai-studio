@@ -40,32 +40,14 @@ export default function FaqPage() {
   const faqSchema = {
     "@context": "https://schema.org",
     "@type": "FAQPage",
-    "mainEntity": [
-      {
-        "@type": "Question",
-        "name": "What is UGOAI Studio?",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "UGOAI Studio is a powerful AI platform that lets users create AI agents, chatbots, generative tools, and automated workflows."
-        }
-      },
-      {
-        "@type": "Question",
-        "name": "Is UGOAI Studio free?",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "Yes, UGOAI Studio offers a free plan with optional paid upgrades."
-        }
-      },
-      {
-        "@type": "Question",
-        "name": "Who created UGOAI Studio?",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "UGOAI Studio was created by Ugochukwu Jonathan, also known as Ugoyoungking."
-        }
+    "mainEntity": faqs.map(faq => ({
+      "@type": "Question",
+      "name": faq.question,
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": faq.answer
       }
-    ]
+    }))
   };
 
   return (
