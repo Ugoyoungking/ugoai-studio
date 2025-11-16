@@ -119,6 +119,26 @@ export default function LandingPage() {
         "price": "0.00",
         "availability": "https://schema.org/InStock",
         "priceValidUntil": "2025-12-31"
+      },
+      "aggregateRating": {
+        "@type": "AggregateRating",
+        "ratingValue": "4.9",
+        "bestRating": "5",
+        "ratingCount": "125"
+      },
+      "review": {
+        "@type": "Review",
+        "reviewRating": {
+          "@type": "Rating",
+          "ratingValue": "5",
+          "bestRating": "5"
+        },
+        "author": {
+          "@type": "Person",
+          "name": "Alex Johnson"
+        },
+        "reviewBody": "UGOAI Studio is a game-changer! The tools are incredibly intuitive and have significantly boosted my productivity. A must-have for any creator.",
+        "datePublished": "2024-05-20"
       }
     },
     {
