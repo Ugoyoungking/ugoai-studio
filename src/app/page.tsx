@@ -211,9 +211,9 @@ export default function LandingPage() {
                 I’m Ugochukwu, a passionate and God-fearing Web Developer and Graphic Designer dedicated to crafting modern, responsive, and user-focused digital experiences. My journey began with HTML and CSS, and over time, I’ve mastered technologies like JavaScript, React, and Node.js. I take pride in transforming creative ideas into functional, visually appealing, and high-performing websites that don’t just look great — they make an impact. Every project I build reflects my commitment to excellence, creativity, and faith-driven purpose.
               </p>
               <Button asChild>
-                <a href="https://ugoyoungking.github.io/portfolio/" target="_blank" rel="noopener noreferrer">
-                  View My Portfolio <ArrowRight className="ml-2 h-5 w-5" />
-                </a>
+                <Link href="/profile">
+                  Learn More About Me <ArrowRight className="ml-2 h-5 w-5" />
+                </Link>
               </Button>
             </div>
           </div>

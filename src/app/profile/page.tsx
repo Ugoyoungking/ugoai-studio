@@ -1,7 +1,7 @@
 import Link from "next/link"
 import Image from "next/image"
 import { Button } from "@/components/ui/button"
-import { ArrowRight } from "lucide-react"
+import { ArrowRight, Github, Linkedin, Twitter } from "lucide-react"
 
 export default function ProfilePage() {
   const personSchema = {
@@ -11,6 +11,7 @@ export default function ProfilePage() {
     "alternateName": "Ugoyoungking",
     "jobTitle": "Web Developer, AI Engineer, UI/UX Designer",
     "url": "https://ugoai-studio.vercel.app/profile",
+    "image": "https://image2url.com/images/1763281027207-cc215844-95e0-4b06-a5b1-f1e23af21be6.png",
     "sameAs": [
       "https://ugoyoungking.github.io/portfolio/",
       "https://www.truelancer.com/freelancer/tlusera2eae11",
@@ -22,8 +23,7 @@ export default function ProfilePage() {
     "worksFor": {
       "@type": "Organization",
       "name": "UGOAI Studio"
-    },
-    "image": "https://image2url.com/images/1763225334695-2ec6f3a1-974a-4506-9923-7bb2d19f5cf6.png"
+    }
   };
 
   return (
@@ -32,7 +32,7 @@ export default function ProfilePage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(personSchema) }}
       />
-      <header className="container mx-auto px-4 sm:px-6 py-4 flex items-center justify-between">
+       <header className="container mx-auto px-4 sm:px-6 py-4 flex items-center justify-between">
         <Link href="/" className="flex items-center gap-2 font-bold text-xl">
           <Image src="/logo.svg" width={28} height={28} alt="UGO AI Studio" />
           <span>UGO AI Studio</span>
@@ -48,30 +48,59 @@ export default function ProfilePage() {
       </header>
 
       <main className="flex-1 container mx-auto px-4 sm:px-6 py-16">
-        <div className="max-w-4xl mx-auto text-center">
-          <h1 className="text-4xl sm:text-5xl font-bold font-headline tracking-tight">
-            About the Developer
-          </h1>
-          <div className="mt-8">
-             <Image 
-                src="https://image2url.com/images/1763225334695-2ec6f3a1-974a-4506-9923-7bb2d19f5cf6.png" 
+        <div className="max-w-4xl mx-auto">
+          <div className="flex flex-col md:flex-row items-center gap-8 md:gap-12">
+            <div className="flex-shrink-0">
+               <Image 
+                src="https://image2url.com/images/1763281027207-cc215844-95e0-4b06-a5b1-f1e23af21be6.png" 
                 alt="Ugochukwu Jonathan"
-                width={150}
-                height={150}
-                className="rounded-full mx-auto mb-4"
+                width={200}
+                height={200}
+                className="rounded-full object-cover border-4 border-primary/10 shadow-lg"
               />
-            <h2 className="text-3xl font-bold">Ugochukwu Jonathan</h2>
-            <p className="text-lg text-muted-foreground mt-2">Web Developer, AI Engineer, & Graphic Designer</p>
+            </div>
+            <div className="text-center md:text-left">
+              <h1 className="text-4xl sm:text-5xl font-bold font-headline tracking-tight">
+                Ugochukwu Jonathan
+              </h1>
+              <p className="mt-2 text-xl text-muted-foreground">
+                Web Developer, AI Engineer, & Graphic Designer
+              </p>
+              <div className="mt-4 flex justify-center md:justify-start gap-4">
+                 <Button variant="ghost" size="icon" asChild>
+                  <a href="https://github.com/ugoyoungking" target="_blank" rel="noopener noreferrer" aria-label="GitHub">
+                    <Github className="h-5 w-5" />
+                  </a>
+                </Button>
+                 <Button variant="ghost" size="icon" asChild>
+                  <a href="https://www.linkedin.com/in/ugoyoungking/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn">
+                    <Linkedin className="h-5 w-5" />
+                  </a>
+                </Button>
+                 <Button variant="ghost" size="icon" asChild>
+                  <a href="https://twitter.com/ugoyoungking" target="_blank" rel="noopener noreferrer" aria-label="Twitter">
+                    <Twitter className="h-5 w-5" />
+                  </a>
+                </Button>
+              </div>
+            </div>
           </div>
-          <p className="mt-6 text-lg max-w-3xl mx-auto">
-            I’m a passionate and God-fearing developer dedicated to crafting modern, responsive, and user-focused digital experiences. My journey began with HTML and CSS, and over time, I’ve mastered technologies like JavaScript, React, and Node.js. I take pride in transforming creative ideas into functional, visually appealing, and high-performing websites that don’t just look great — they make an impact. Every project I build reflects my commitment to excellence, creativity, and faith-driven purpose.
-          </p>
-          <div className="mt-8">
-            <Button asChild size="lg">
-              <a href="https://ugoyoungking.github.io/portfolio/" target="_blank" rel="noopener noreferrer">
-                View My Portfolio <ArrowRight className="ml-2 h-5 w-5" />
-              </a>
-            </Button>
+
+          <div className="mt-12 prose dark:prose-invert max-w-none">
+            <h2>About Me</h2>
+            <p>
+              I’m a passionate and God-fearing developer dedicated to crafting modern, responsive, and user-focused digital experiences. My journey began with HTML and CSS, and over time, I’ve mastered technologies like JavaScript, React, and Node.js. I take pride in transforming creative ideas into functional, visually appealing, and high-performing websites that don’t just look great — they make an impact.
+            </p>
+            <p>
+              This project, UGO AI Studio, is a reflection of my commitment to excellence, creativity, and faith-driven purpose. It combines my skills in web development and my growing passion for artificial intelligence to create a powerful and intuitive platform.
+            </p>
+             <div className="mt-8 not-prose">
+                <Button asChild size="lg">
+                  <a href="https://ugoyoungking.github.io/portfolio/" target="_blank" rel="noopener noreferrer">
+                    View My Portfolio <ArrowRight className="ml-2 h-5 w-5" />
+                  </a>
+                </Button>
+              </div>
           </div>
         </div>
       </main>
