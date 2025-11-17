@@ -1,3 +1,4 @@
+
 'use client';
 import { Header } from "@/components/layout/header"
 import { AppSidebar } from "@/components/layout/sidebar"
@@ -5,6 +6,7 @@ import { usePathname } from "next/navigation"
 import { redirect } from "next/navigation";
 import { useEffect } from "react";
 import { useUser } from "@/firebase/auth/use-user";
+import { usePushNotifications } from "@/hooks/use-push-notifications";
 
 
 export default function MainLayout({
@@ -14,12 +16,29 @@ export default function MainLayout({
 }>) {
   const pathname = usePathname();
   const { user, loading } = useUser();
+  const { requestNotificationPermission } = usePushNotifications();
 
   useEffect(() => {
     if (!loading && !user && pathname !== '/login' && pathname !== '/signup') {
       redirect('/login');
     }
   }, [loading, user, pathname]);
+
+   useEffect(() => {
+    // Request notification permission once the user is logged in
+    // and the component has mounted.
+    if (user && typeof window !== 'undefined') {
+      const permissionRequested = localStorage.getItem('notificationPermissionRequested');
+      if (!permissionRequested) {
+        // Delay the request slightly to not overwhelm the user immediately on login
+        setTimeout(() => {
+          requestNotificationPermission();
+          localStorage.setItem('notificationPermissionRequested', 'true');
+        }, 5000); 
+      }
+    }
+  }, [user, requestNotificationPermission]);
+
 
   if (loading) {
     return (
