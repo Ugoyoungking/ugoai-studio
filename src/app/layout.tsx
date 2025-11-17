@@ -117,11 +117,6 @@ export default function RootLayout({
           />
         ))}
         <link rel="icon" href="/logo.svg" type="image/svg+xml" />
-         <style>{`
-          :root {
-            --font-code: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace;
-          }
-        `}</style>
       </head>
       <body className={`${inter.variable} font-body antialiased`}>
         <FirebaseProvider>

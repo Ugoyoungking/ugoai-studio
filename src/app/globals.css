@@ -37,6 +37,7 @@
     --sidebar-accent-foreground: 231 48% 28%;
     --sidebar-border: 231 20% 80%;
     --sidebar-ring: 231 48% 48%;
+    --font-code: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace;
   }
   .dark {
     --background: 231 30% 12%;
