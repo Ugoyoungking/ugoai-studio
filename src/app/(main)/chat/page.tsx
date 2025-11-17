@@ -199,14 +199,13 @@ export default function ChatPage() {
       updatedMessages = [...chats[activeChatIndex].messages, userMessage];
     }
     
-    let tempTitle = chats[activeChatIndex].title;
     const isNewChat = chats[activeChatIndex].messages.length <= 1;
 
     // Update UI immediately
     const updatedChats = [...chats];
     updatedChats[activeChatIndex] = {
       ...updatedChats[activeChatIndex],
-      messages: updatedMessages,
+      messages: [...updatedMessages, {role: 'model', content: ''}], // Add empty model message for loading state
     };
     setChats(updatedChats);
     setInput('');
@@ -436,7 +435,13 @@ export default function ChatPage() {
                             : 'bg-muted'
                         }`}
                       >
-                         <ChatMessage content={message.content} />
+                         {isLoading && index === activeChat.messages.length - 1 ? (
+                            <div className="flex items-center">
+                               <Loader className="h-5 w-5 animate-spin text-primary" />
+                            </div>
+                         ) : (
+                            <ChatMessage content={message.content} />
+                         )}
                       </div>
                     </div>
                     {message.role === 'model' &&
@@ -507,16 +512,6 @@ export default function ChatPage() {
                       )}
                   </div>
                 ))}
-                {isLoading && (
-                  <div className="flex items-start gap-4">
-                    <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
-                      <Bot className="h-5 w-5" />
-                    </div>
-                    <div className="max-w-xl rounded-lg p-4 text-sm bg-muted flex items-center">
-                      <Loader className="h-5 w-5 animate-spin text-primary" />
-                    </div>
-                  </div>
-                )}
               </div>
             </ScrollArea>
           </CardContent>
@@ -533,7 +528,7 @@ export default function ChatPage() {
                 type="submit"
                 size="icon"
                 className="absolute right-2.5 top-1/2 -translate-y-1/2 h-9 w-9"
-                disabled={isLoading || !activeChatId}
+                disabled={isLoading || !activeChatId || !input.trim()}
               >
                 <Send className="h-4 w-4" />
                 <span className="sr-only">Send</span>
@@ -545,7 +540,3 @@ export default function ChatPage() {
     </div>
   );
 }
-
-    
-
-    
