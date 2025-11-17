@@ -1,7 +1,7 @@
-import type {NextConfig} from 'next';
-import withPWA from 'next-pwa';
+const withPWA = require('next-pwa');
 
-const nextConfig: NextConfig = {
+/** @type {import('next').NextConfig} */
+const nextConfig = {
   /* config options here */
   typescript: {
     ignoreBuildErrors: true,
@@ -44,4 +44,4 @@ const isProduction = process.env.NODE_ENV === 'production';
 // Only wrap with PWA config in production. This change ensures Turbopack is not disabled during development.
 const configToExport = isProduction ? withPWA(pwaConfig)(nextConfig) : nextConfig;
 
-export default configToExport;
+module.exports = configToExport;

@@ -1,7 +1,7 @@
-import type {NextConfig} from 'next';
-import withPWA from 'next-pwa';
+const withPWA = require('next-pwa');
 
-const nextConfig: NextConfig = {
+/** @type {import('next').NextConfig} */
+const nextConfig = {
   /* config options here */
   typescript: {
     ignoreBuildErrors: true,
@@ -45,4 +45,4 @@ const configToExport = process.env.NODE_ENV === 'production'
   ? withPWA(pwaConfig)(nextConfig) 
   : nextConfig;
 
-export default configToExport;
+module.exports = configToExport;
