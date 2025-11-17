@@ -19,15 +19,17 @@ export default function MainLayout({
   const { requestNotificationPermission, initializeScheduledNotification, isSubscribed } = usePushNotifications();
 
   useEffect(() => {
-    if (!loading && !user && pathname !== '/login' && pathname !== '/signup') {
+    // If we're still loading, don't do anything.
+    if (loading) return;
+
+    // These paths do not require authentication.
+    const publicPaths = ['/login', '/signup', '/forgot-password', '/privacy', '/terms', '/how-to-use', '/profile', '/faq'];
+
+    // If the user is not logged in and not on the landing page or a public page, redirect to login.
+    if (!user && pathname !== '/' && !publicPaths.includes(pathname)) {
       redirect('/login');
     }
-    // This was causing the issue. If the user is logged in and at the root,
-    // they should be able to see the landing page, not be redirected.
-    // The redirect to /chat should happen on login, not on every visit to '/'.
-    // if (!loading && user && pathname === '/') {
-    //  redirect('/chat');
-    // }
+
   }, [loading, user, pathname]);
 
    useEffect(() => {
@@ -62,9 +64,24 @@ export default function MainLayout({
     );
   }
   
-  if (!user) {
-    // This will be shown briefly before the redirect fires.
-    // Or if the redirect fails for some reason.
+  // Public pages and auth pages should not have the main app shell
+  const isPublicPage = ['/', '/login', '/signup', '/forgot-password', '/privacy', '/terms', '/how-to-use', '/profile', '/faq'].includes(pathname);
+
+  if (isPublicPage) {
+     if (!user && pathname === '/') {
+        return <>{children}</>;
+     }
+     if (user && pathname === '/') {
+        // Logged-in users at root see the app shell
+     } else if (!user && (pathname === '/login' || pathname === '/signup' || pathname === '/forgot-password')) {
+       return <>{children}</>;
+     } else if (['/privacy', '/terms', '/how-to-use', '/profile', '/faq'].includes(pathname)){
+       return <>{children}</>; // Info pages are always public
+     }
+  }
+
+  // If user is not logged in and trying to access a protected page, show a redirecting message.
+  if (!user && !isPublicPage) {
     return (
        <div className="flex min-h-screen w-full flex-col bg-muted/40 items-center justify-center">
         <p>Redirecting to login...</p>
@@ -72,6 +89,7 @@ export default function MainLayout({
     );
   }
 
+  // At this point, user is logged in, show the full app shell.
   return (
     <div className="flex min-h-screen w-full flex-col bg-muted/40">
       <AppSidebar />
