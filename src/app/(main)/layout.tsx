@@ -16,7 +16,7 @@ export default function MainLayout({
 }>) {
   const pathname = usePathname();
   const { user, loading } = useUser();
-  const { requestNotificationPermission } = usePushNotifications();
+  const { requestNotificationPermission, initializeScheduledNotification, isSubscribed } = usePushNotifications();
 
   useEffect(() => {
     if (!loading && !user && pathname !== '/login' && pathname !== '/signup') {
@@ -38,6 +38,13 @@ export default function MainLayout({
       }
     }
   }, [user, requestNotificationPermission]);
+
+  useEffect(() => {
+    // When the app loads and we know the user is subscribed, re-initialize the scheduler
+    if(isSubscribed) {
+      initializeScheduledNotification();
+    }
+  }, [isSubscribed, initializeScheduledNotification]);
 
 
   if (loading) {
