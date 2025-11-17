@@ -19,14 +19,18 @@ export default function MainLayout({
   const { requestNotificationPermission, initializeScheduledNotification, isSubscribed } = usePushNotifications();
 
   useEffect(() => {
-    // If we're still loading, don't do anything.
     if (loading) return;
 
-    // These paths do not require authentication.
+    // The landing page lives at the root, so if user is logged in and at root, send them to chat.
+    if (user && pathname === '/') {
+      redirect('/chat');
+    }
+    
+    // These paths are public and don't need the app shell or auth.
     const publicPaths = ['/login', '/signup', '/forgot-password', '/privacy', '/terms', '/how-to-use', '/profile', '/faq'];
 
-    // If the user is not logged in and not on the landing page or a public page, redirect to login.
-    if (!user && pathname !== '/' && !publicPaths.includes(pathname)) {
+    // If the user is not logged in and not on a public page (and not on root), redirect to login.
+    if (!user && !publicPaths.includes(pathname) && pathname !== '/') {
       redirect('/login');
     }
 
@@ -64,32 +68,46 @@ export default function MainLayout({
     );
   }
   
-  // Public pages and auth pages should not have the main app shell
-  const isPublicPage = ['/', '/login', '/signup', '/forgot-password', '/privacy', '/terms', '/how-to-use', '/profile', '/faq'].includes(pathname);
+  // Define pages that don't get the app shell (sidebar, header, etc.)
+  const noShellPages = ['/', '/login', '/signup', '/forgot-password', '/privacy', '/terms', '/how-to-use', '/profile', '/faq'];
 
-  if (isPublicPage) {
-     if (!user && pathname === '/') {
+  if (noShellPages.includes(pathname)) {
+    // If user is not logged in and on the landing page, show it.
+    if (!user && pathname === '/') {
         return <>{children}</>;
-     }
-     if (user && pathname === '/') {
-        // Logged-in users at root see the app shell
-     } else if (!user && (pathname === '/login' || pathname === '/signup' || pathname === '/forgot-password')) {
+    }
+    // If user is logged in, they are redirected to /chat, so we don't need to handle that here.
+    // Auth pages are always shown without shell for non-logged-in users.
+    if (!user && (pathname === '/login' || pathname === '/signup' || pathname === '/forgot-password')) {
        return <>{children}</>;
-     } else if (['/privacy', '/terms', '/how-to-use', '/profile', '/faq'].includes(pathname)){
-       return <>{children}</>; // Info pages are always public
-     }
+    }
+    // Public info pages are always shown without the shell.
+    if (['/privacy', '/terms', '/how-to-use', '/profile', '/faq'].includes(pathname)){
+       return <>{children}</>;
+    }
   }
 
+
   // If user is not logged in and trying to access a protected page, show a redirecting message.
-  if (!user && !isPublicPage) {
+  if (!user && !noShellPages.includes(pathname)) {
     return (
        <div className="flex min-h-screen w-full flex-col bg-muted/40 items-center justify-center">
         <p>Redirecting to login...</p>
        </div>
     );
   }
+  
+  // If we're at the root path, but the user is logged in, they should be redirected.
+  // This avoids showing a blank page while redirecting.
+  if (user && pathname === '/') {
+     return (
+       <div className="flex min-h-screen w-full flex-col bg-muted/40 items-center justify-center">
+        <p>Redirecting to your dashboard...</p>
+       </div>
+    );
+  }
 
-  // At this point, user is logged in, show the full app shell.
+  // At this point, user is logged in and on a protected page. Show the full app shell.
   return (
     <div className="flex min-h-screen w-full flex-col bg-muted/40">
       <AppSidebar />
