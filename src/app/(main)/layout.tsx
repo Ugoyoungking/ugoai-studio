@@ -19,7 +19,16 @@ export default function MainLayout({
   const { requestNotificationPermission, initializeScheduledNotification, isSubscribed } = usePushNotifications();
 
   useEffect(() => {
-    if (!loading && !user && pathname !== '/login' && pathname !== '/signup') {
+    // These paths are public
+    const publicPaths = ['/login', '/signup', '/forgot-password', '/privacy', '/terms', '/how-to-use', '/profile', '/faq'];
+    
+    // If the path is the root page, we allow it for logged-in users.
+    if (pathname === '/') {
+        return;
+    }
+    
+    // Redirect to login if user is not loaded and not on a public path.
+    if (!loading && !user && !publicPaths.includes(pathname)) {
       redirect('/login');
     }
   }, [loading, user, pathname]);
@@ -56,8 +65,8 @@ export default function MainLayout({
     );
   }
   
-  if (!user) {
-    // This will be shown briefly before the redirect fires.
+  if (!user && pathname !== '/') {
+    // This will be shown briefly before the redirect fires for protected routes.
     // Or if the redirect fails for some reason.
     return (
        <div className="flex min-h-screen w-full flex-col bg-muted/40 items-center justify-center">
@@ -65,6 +74,17 @@ export default function MainLayout({
        </div>
     );
   }
+  
+  // Logic to determine which layout to show
+  const isAuthPage = ['/login', '/signup', '/forgot-password'].includes(pathname);
+  const isInfoPage = ['/privacy', '/terms', '/how-to-use', '/profile', '/faq'].includes(pathname);
+
+  // If it's the root page, an auth page or an info page, show children without the main app shell.
+  // The root page now has its own header/footer.
+  if (pathname === '/' || isAuthPage || isInfoPage) {
+    return <>{children}</>;
+  }
+
 
   return (
     <div className="flex min-h-screen w-full flex-col bg-muted/40">

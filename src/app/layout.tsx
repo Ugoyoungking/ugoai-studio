@@ -5,6 +5,7 @@ import { FirebaseProvider } from '@/firebase/provider';
 import { URL } from 'url';
 import { Inter } from 'next/font/google';
 import { Analytics } from "@vercel/analytics/react";
+import MainLayout from './(main)/layout';
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
 
@@ -121,7 +122,9 @@ export default function RootLayout({
       </head>
       <body className={`${inter.variable} font-body antialiased`}>
         <FirebaseProvider>
-          {children}
+           <MainLayout>
+              {children}
+           </MainLayout>
         </FirebaseProvider>
         <Toaster />
         <Analytics />
