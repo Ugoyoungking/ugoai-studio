@@ -1,3 +1,4 @@
+
 import Link from "next/link"
 import { ArrowRight, Bot, FileText, ImageIcon, Type } from "lucide-react"
 import { Button } from "@/components/ui/button"
