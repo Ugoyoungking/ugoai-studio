@@ -30,19 +30,24 @@ export async function generatePdfFromText(input: GeneratePdfFromTextInput): Prom
   return generatePdfFromTextFlow(input);
 }
 
-const pdfGenerationPrompt = ai.definePrompt({
-  name: 'pdfGenerationPrompt',
-  input: {schema: z.object({prompt: z.string()})},
-  output: {
-    schema: z.object({
-      title: z.string(),
-      content: z.string(),
-    }),
-  },
-  prompt: `You are an AI that generates content for a PDF document based on a text prompt.
+const PdfGenerationPromptInputSchema = z.object({prompt: z.string()});
+const PdfGenerationPromptOutputSchema = z.object({
+  title: z.string(),
+  content: z.string(),
+});
+
+const pdfGenerationPrompt = ai.definePrompt(
+  {
+    name: 'pdfGenerationPrompt',
+    input: {schema: PdfGenerationPromptInputSchema},
+    output: {
+      schema: PdfGenerationPromptOutputSchema,
+    },
+    prompt: `You are an AI that generates content for a PDF document based on a text prompt.
   Generate a title and content for a PDF based on the following prompt:
   {{{prompt}}}`,
-});
+  }
+);
 
 const generatePdfFromTextFlow = ai.defineFlow(
   {
@@ -50,7 +55,7 @@ const generatePdfFromTextFlow = ai.defineFlow(
     inputSchema: GeneratePdfFromTextInputSchema,
     outputSchema: GeneratePdfFromTextOutputSchema,
   },
-  async input => {
+  async (input: GeneratePdfFromTextInput): Promise<GeneratePdfFromTextOutput> => {
     const {output} = await pdfGenerationPrompt({prompt: input.textPrompt});
 
     if (!output) {

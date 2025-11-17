@@ -46,7 +46,7 @@ const explainPdfContentFlow = ai.defineFlow(
     inputSchema: ExplainPdfContentInputSchema,
     outputSchema: ExplainPdfContentOutputSchema,
   },
-  async input => {
+  async (input: ExplainPdfContentInput): Promise<ExplainPdfContentOutput> => {
     const {output} = await prompt(input);
     return output!;
   }

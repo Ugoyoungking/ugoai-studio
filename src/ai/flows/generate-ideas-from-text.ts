@@ -38,7 +38,7 @@ const generateIdeasFlow = ai.defineFlow(
     inputSchema: GenerateIdeasInputSchema,
     outputSchema: GenerateIdeasOutputSchema,
   },
-  async input => {
+  async (input: GenerateIdeasInput): Promise<GenerateIdeasOutput> => {
     const {output} = await prompt(input);
     return output!;
   }

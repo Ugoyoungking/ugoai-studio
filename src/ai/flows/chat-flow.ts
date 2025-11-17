@@ -19,7 +19,7 @@ const chatFlow = ai.defineFlow(
     inputSchema: ChatInputSchema,
     outputSchema: ChatOutputSchema,
   },
-  async input => {
+  async (input: ChatInput): Promise<ChatOutput> => {
     const {history, message} = input;
 
     const result = await ai.generate({

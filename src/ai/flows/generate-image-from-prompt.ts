@@ -31,7 +31,7 @@ const generateImageFromPromptFlow = ai.defineFlow(
     inputSchema: GenerateImageFromPromptInputSchema,
     outputSchema: GenerateImageFromPromptOutputSchema,
   },
-  async input => {
+  async (input: GenerateImageFromPromptInput): Promise<GenerateImageFromPromptOutput> => {
     const {media} = await ai.generate({
       model: 'googleai/imagen-4.0-fast-generate-001',
       prompt: input.promptText,

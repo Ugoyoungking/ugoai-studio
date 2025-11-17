@@ -31,7 +31,7 @@ const generateChatTitleFlow = ai.defineFlow(
     inputSchema: GenerateChatTitleInputSchema,
     outputSchema: GenerateChatTitleOutputSchema,
   },
-  async input => {
+  async (input: GenerateChatTitleInput): Promise<GenerateChatTitleOutput> => {
     const {output} = await prompt(input);
     return output!;
   }
